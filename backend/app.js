@@ -5,10 +5,12 @@ const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const sequelize = require("./config/database");
 
+const catalogoRoutes = require("./routes/catalogo");
 const produtoRoutes = require("./routes/produtos");
 const categoriaRoutes = require("./routes/categoria");
 const usuarioRoutes = require("./routes/usuarios");
 const authRoutes = require("./routes/auth");
+app.use("/api/auth", authRoutes);
 
 const app = express();
 
@@ -31,6 +33,7 @@ app.use(
 app.use("/api/usuarios", usuarioRoutes);
 app.use("/api/produtos", produtoRoutes);
 app.use("/api/categorias", categoriaRoutes);
+app.use("/api/catalogo", catalogoRoutes);
 app.use("/api/auth", authRoutes);
 
 app.get("/", (req, res) => {
