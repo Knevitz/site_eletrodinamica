@@ -10,9 +10,8 @@ const produtoRoutes = require("./routes/produtos");
 const categoriaRoutes = require("./routes/categoria");
 const usuarioRoutes = require("./routes/usuarios");
 const authRoutes = require("./routes/auth");
-app.use("/api/auth", authRoutes);
-
 const app = express();
+app.use("/api/auth", authRoutes);
 
 // Middlewares globais
 
