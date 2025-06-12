@@ -11,13 +11,13 @@ const categoriaRoutes = require("./routes/categoria");
 const usuarioRoutes = require("./routes/usuarios");
 const authRoutes = require("./routes/auth");
 const app = express();
-app.use("/api/auth", authRoutes);
 
 // Middlewares globais
 
 app.use(cors());
 app.use(helmet());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use("/uploads", express.static("uploads"));
 
 // Rate limiting (antes das rotas)
