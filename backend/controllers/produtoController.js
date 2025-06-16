@@ -12,10 +12,24 @@ const deletarArquivoSeExistir = (caminho) => {
 
 // Criar produto
 exports.criarProduto = async (req, res) => {
-  const { nome, descricao, categoriaId } = req.body;
+  const {
+    nome,
+    descricao,
+    categoriaId,
+    codigoPadrao,
+    opcoesSelect,
+    codigosPorOpcao,
+  } = req.body;
   const imagem = req.files?.imagem?.[0]?.filename || null;
   const pdf = req.files?.pdf?.[0]?.filename || null;
   const slug = slugify(nome);
+  // Validação: se não tiver codigosPorOpcao, codigoPadrao é obrigatório
+  const temCodigosPorOpcao = codigosPorOpcao && JSON.parse(codigosPorOpcao);
+  if (!temCodigosPorOpcao && !codigoPadrao) {
+    return res.status(400).json({
+      erro: "É obrigatório informar o codigo padrão se o produto não tiver códigos por opção",
+    });
+  }
 
   try {
     const novoProduto = await Produto.create({
@@ -25,6 +39,9 @@ exports.criarProduto = async (req, res) => {
       imagem,
       pdf,
       slug,
+      codigoPadrao,
+      opcoesSelect: opcoesSelect ? JSON.parse(opcoesSelect) : null,
+      codigosPorOpcao: codigosPorOpcao ? JSON.parse(codigosPorOpcao) : null,
     });
     res.status(201).json(novoProduto);
   } catch (erro) {
@@ -36,7 +53,15 @@ exports.criarProduto = async (req, res) => {
 // Atualizar produto
 exports.atualizarProduto = async (req, res) => {
   const { id } = req.params;
-  const { nome, descricao, ativo, categoriaId } = req.body;
+  const {
+    nome,
+    descricao,
+    ativo,
+    categoriaId,
+    codigoPadrao,
+    opcoesSelect,
+    codigosPorOpcao,
+  } = req.body;
 
   try {
     const produto = await Produto.findByPk(id);
@@ -76,18 +101,41 @@ exports.atualizarProduto = async (req, res) => {
 
     produto.descricao = descricao ?? produto.descricao;
     produto.ativo = ativo !== undefined ? ativo : produto.ativo;
+    if (codigoPadrao) produto.codigoPadrao = codigoPadrao;
+
+    if (opcoesSelect) {
+      produto.opcoesSelect =
+        typeof opcoesSelect === "string"
+          ? JSON.parse(opcoesSelect)
+          : opcoesSelect;
+    }
+
+    if (codigosPorOpcao) {
+      produto.codigosPorOpcao =
+        typeof codigosPorOpcao === "string"
+          ? JSON.parse(codigosPorOpcao)
+          : codigosPorOpcao;
+    }
+    const novosCodigosPorOpcao = codigosPorOpcao
+      ? typeof codigosPorOpcao === "string"
+        ? JSON.parse(codigosPorOpcao)
+        : codigosPorOpcao
+      : null;
+
+    if (!novosCodigosPorOpcao && !codigoPadrao) {
+      return res.status(400).json({
+        erro: "É obrigatório ter 'codigoPadrao' quando 'codigosPorOpcao' estiver vazio.",
+      });
+    }
 
     await produto.save();
     res.status(200).json(produto);
   } catch (erro) {
     console.error("Erro ao atualizar produto:", erro);
-    res
-      .status(500)
-      .json({
-        erro: "Erro ao atualizar produto.",
-        erro: "Erro ao atualizar produto.",
-        detalhes: erro.message,
-      });
+    res.status(500).json({
+      erro: "Erro ao atualizar produto.",
+      detalhes: erro.message,
+    });
   }
 };
 
