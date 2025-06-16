@@ -1,6 +1,6 @@
 require("dotenv").config();
 const app = require("./app");
-const sequelize = require("./config/database");
+const { sequelize } = require("./models"); // importa models com associações
 
 const PORT = process.env.PORT || 3000;
 
