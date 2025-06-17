@@ -18,11 +18,12 @@ import PainelAdmin from "./pages/PainelAdmin";
 import ProdutosAdmin from "./components/ProdutosAdmin";
 import ClientesAdmin from "./components/ClientesAdmin";
 import AtualizarCatalogo from "./components/AtualizarCatalogo";
+import Registrar from "./pages/Registrar";
 
 const AppContent = () => {
   const location = useLocation();
   const isLoginPage =
-    location.pathname === "/login" || location.pathname === "/login"; // Adicionando a rota /perfil
+    location.pathname === "/login" || location.pathname === "/registrar"; // Adicionando a rota /perfil
 
   return (
     <>
@@ -34,7 +35,7 @@ const AppContent = () => {
             <Route path="/" element={<Home />} />
             <Route path="/Carrinho" element={<Carrinho />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/login" element={<login />} />{" "}
+            <Route path="/registrar" element={<Registrar />} />
             <Route path="/cliente" element={<ContaCliente />} />
             <Route path="/admin" element={<PainelAdmin />} />
             <Route path="/admin/produtos" element={<ProdutosAdmin />} />
