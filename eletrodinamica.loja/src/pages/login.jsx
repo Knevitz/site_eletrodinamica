@@ -4,6 +4,7 @@ import CNPJ from "../components/CNPJ";
 import "../App.css";
 import "./login.css";
 import loginImage from "../assets/foto-divulgacao.jpg";
+import CampoSenha from "../components/CampoSenha";
 
 const Login = () => {
   const [cnpj, setCnpj] = useState("");
@@ -76,19 +77,7 @@ const Login = () => {
               />
             </div>
             <div className="mb-3">
-              <label htmlFor="password" className="form-label">
-                Senha
-              </label>
-              <input
-                type="password"
-                className="form-control"
-                id="password"
-                name="password"
-                placeholder="Digite sua senha"
-                value={senha}
-                onChange={(e) => setSenha(e.target.value)}
-                required
-              />
+              <CampoSenha senha={senha} setSenha={setSenha} />
             </div>
             {erro && (
               <div className="alert alert-danger text-center">{erro}</div>
@@ -96,6 +85,11 @@ const Login = () => {
             <button type="submit" className="btn btn-danger w-100">
               Login
             </button>
+            <div className="mt-3">
+              <Link to="/recuperar-senha" className="text-danger">
+                Esqueci minha senha
+              </Link>
+            </div>
           </form>
           <p className="mt-4 text-center">
             Não tem uma conta?{" "}

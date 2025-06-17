@@ -13,6 +13,8 @@ import NavBarComp from "./components/NavBarComp";
 import Home from "./pages/Home";
 import Carrinho from "./pages/Carrinho";
 import Login from "./pages/login";
+import RecuperarSenha from "./pages/RecuperarSenha";
+import RedefinirSenha from "./pages/RedefinirSenha";
 import ContaCliente from "./pages/ContaCliente";
 import PainelAdmin from "./pages/PainelAdmin";
 import ProdutosAdmin from "./components/ProdutosAdmin";
@@ -23,7 +25,8 @@ import Registrar from "./pages/Registrar";
 const AppContent = () => {
   const location = useLocation();
   const isLoginPage =
-    location.pathname === "/login" || location.pathname === "/registrar"; // Adicionando a rota /perfil
+    ["/login", "/registrar", "/recuperar-senha"].includes(location.pathname) ||
+    location.pathname.startsWith("/redefinir-senha");
 
   return (
     <>
@@ -35,6 +38,8 @@ const AppContent = () => {
             <Route path="/" element={<Home />} />
             <Route path="/Carrinho" element={<Carrinho />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/recuperar-senha" element={<RecuperarSenha />} />
+            <Route path="/redefinir-senha" element={<RedefinirSenha />} />
             <Route path="/registrar" element={<Registrar />} />
             <Route path="/cliente" element={<ContaCliente />} />
             <Route path="/admin" element={<PainelAdmin />} />
