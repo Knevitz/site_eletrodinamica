@@ -28,6 +28,10 @@ const Produto = sequelize.define("Produto", {
     type: DataTypes.BOOLEAN,
     defaultValue: true,
   },
+  codigoPadrao: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   categoriaId: {
     type: DataTypes.INTEGER,
     allowNull: false,

@@ -4,6 +4,9 @@ const produtoController = require("../controllers/produtoController");
 const authMiddleware = require("../middleware/authMiddleware");
 const upload = require("../middleware/upload");
 
+const autenticarToken = authMiddleware.autenticarToken;
+const apenasAdmin = authMiddleware.apenasAdmin;
+
 // Rotas protegidas (somente admin)
 router.post(
   "/",
@@ -12,13 +15,17 @@ router.post(
   upload.fields([{ name: "imagem" }, { name: "pdf" }]),
   produtoController.criarProduto
 );
-router.put(
+
+// Atualizar produto
+router.patch(
   "/:id",
   authMiddleware.autenticarToken,
   authMiddleware.apenasAdmin,
   upload.fields([{ name: "imagem" }, { name: "pdf" }]),
   produtoController.atualizarProduto
 );
+
+// Excluir produto
 router.delete(
   "/:id",
   authMiddleware.autenticarToken,
@@ -26,7 +33,25 @@ router.delete(
   produtoController.excluirProduto
 );
 
-// Rota pública (listar produtos ativos)
-router.get("/", produtoController.listarProdutosAtivos);
+// listar produtos ativos
+router.get("/ativos", produtoController.listarProdutosAtivos);
+router.get(
+  "/:id",
+  autenticarToken,
+  apenasAdmin,
+  produtoController.buscarProdutoPorId
+);
+router.get(
+  "/",
+  autenticarToken,
+  apenasAdmin,
+  produtoController.listarTodosProdutos
+);
+router.get(
+  "/admin",
+  authMiddleware.autenticarToken,
+  authMiddleware.apenasAdmin,
+  produtoController.listarTodosProdutos
+);
 
 module.exports = router;
