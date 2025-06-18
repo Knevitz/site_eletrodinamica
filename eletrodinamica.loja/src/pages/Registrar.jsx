@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import CNPJ from "../components/CNPJ";
 import registerImage from "../assets/foto-divulgacao.jpg";
+import CampoSenha from "../components/CampoSenha";
 
 const Registrar = () => {
   const [nome, setNome] = useState("");
@@ -104,28 +105,22 @@ const Registrar = () => {
             </div>
 
             <div className="mb-3">
-              <label htmlFor="senha" className="form-label">
-                Senha
-              </label>
-              <input
-                type="password"
-                className="form-control"
+              <CampoSenha
+                label="Senha"
                 id="senha"
-                value={senha}
-                onChange={(e) => setSenha(e.target.value)}
-              />
+                placeholder="Digite sua senha"
+                valor={senha}
+                setValor={setSenha}
+              />{" "}
             </div>
 
             <div className="mb-3">
-              <label htmlFor="confirmaSenha" className="form-label">
-                Confirmar Senha
-              </label>
-              <input
-                type="password"
-                className="form-control"
-                id="confirmaSenha"
-                value={confirmaSenha}
-                onChange={(e) => setConfirmaSenha(e.target.value)}
+              <CampoSenha
+                label="Confirmar Senha"
+                id="confirmarSenha"
+                placeholder="Confirme sua senha"
+                valor={confirmaSenha}
+                setValor={setConfirmaSenha}
               />
             </div>
 

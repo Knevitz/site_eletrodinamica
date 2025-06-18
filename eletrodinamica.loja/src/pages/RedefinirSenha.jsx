@@ -54,15 +54,21 @@ const RedefinirSenha = () => {
       <h2>Redefinir Senha</h2>
       <form onSubmit={handleSubmit}>
         <CampoSenha
-          senha={novaSenha}
-          setSenha={setNovaSenha}
           label="Nova senha"
+          id="novaSenha"
+          placeholder="Digite a nova senha"
+          valor={novaSenha}
+          setValor={setNovaSenha}
         />
+
         <CampoSenha
-          senha={confirmarSenha}
-          setSenha={setConfirmarSenha}
           label="Confirmar nova senha"
+          id="confirmarNovaSenha"
+          placeholder="Confirme a nova senha"
+          valor={confirmarSenha}
+          setValor={setConfirmarSenha}
         />
+
         {mensagem && <div className="alert alert-success mt-3">{mensagem}</div>}
         {erro && <div className="alert alert-danger mt-3">{erro}</div>}
         <button type="submit" className="btn btn-danger mt-3">

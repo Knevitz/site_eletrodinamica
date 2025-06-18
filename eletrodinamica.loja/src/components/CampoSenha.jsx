@@ -1,23 +1,23 @@
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
-const CampoSenha = ({ senha, setSenha }) => {
+const CampoSenha = ({ label, id, placeholder, valor, setValor }) => {
   const [mostrarSenha, setMostrarSenha] = useState(false);
 
   return (
     <div className="mb-3">
-      <label htmlFor="password" className="form-label">
-        Senha
+      <label htmlFor={id} className="form-label">
+        {label}
       </label>
       <div className="input-group">
         <input
           type={mostrarSenha ? "text" : "password"}
           className="form-control"
-          id="password"
-          name="password"
-          placeholder="Digite sua senha"
-          value={senha}
-          onChange={(e) => setSenha(e.target.value)}
+          id={id}
+          name={id}
+          placeholder={placeholder}
+          value={valor}
+          onChange={(e) => setValor(e.target.value)}
           required
         />
         <button

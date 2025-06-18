@@ -77,7 +77,13 @@ const Login = () => {
               />
             </div>
             <div className="mb-3">
-              <CampoSenha senha={senha} setSenha={setSenha} />
+              <CampoSenha
+                label="Senha"
+                id="senha"
+                placeholder="Digite sua senha"
+                valor={senha}
+                setValor={setSenha}
+              />
             </div>
             {erro && (
               <div className="alert alert-danger text-center">{erro}</div>
