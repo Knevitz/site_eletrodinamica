@@ -295,3 +295,23 @@ textarea.form-control {
   border: 2px solid #d40000 !important;
   border-radius: 10px; /* ou ajuste como preferir */
 }
+
+.icon-hover {
+  background-color: transparent !important;
+  border: 1px solid transparent !important;
+  border-radius: 6px;
+  padding: 4px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white !important; /* ícone branco */
+}
+
+.icon-hover:hover,
+.icon-hover:focus {
+  background-color: white !important; /* quadrado branco no hover */
+  border-color: white !important; /* borda branca no hover */
+  color: #d40000 !important; /* ícone vermelho no hover */
+  outline: none !important;
+  box-shadow: none !important;
+}

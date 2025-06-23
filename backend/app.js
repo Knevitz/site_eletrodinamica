@@ -5,6 +5,7 @@ const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const sequelize = require("./config/database");
 
+const configRoutes = require("./routes/configRoutes");
 const catalogoRoutes = require("./routes/catalogo");
 const produtoRoutes = require("./routes/produtos");
 const categoriaRoutes = require("./routes/categoria");
@@ -34,6 +35,7 @@ app.use("/api/produtos", produtoRoutes);
 app.use("/api/categorias", categoriaRoutes);
 app.use("/api/catalogo", catalogoRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/config", configRoutes);
 
 app.get("/", (req, res) => {
   res.send("API da Eletrodinâmica está rodando");

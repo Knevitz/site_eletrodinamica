@@ -8,25 +8,79 @@ import {
   FormControl,
   Button,
   Badge,
+  Dropdown,
 } from "react-bootstrap";
-import { Link, NavLink, useLocation } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+
 import { FaUserCircle, FaShoppingCart } from "react-icons/fa";
 import "../App.css";
 import logo from "../assets/eletrodinamica.png";
 
 const NavBarComp = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [categorias, setCategorias] = useState([]);
 
-  useEffect(() => {
-    // Simulação de fetch de categorias do backend
-    // No backend, este endpoint deve retornar as categorias criadas no painel admin
-    async function fetchCategorias() {
-      // Exemplo com fetch, substitua URL pela real
-      // const response = await fetch("http://localhost:3001/api/categorias");
-      // const data = await response.json();
+  // Estado para token e nome do usuário
+  const [token, setToken] = useState(localStorage.getItem("token") || null);
+  const [nomeUsuario, setNomeUsuario] = useState(null);
 
-      // Mock
+  // Atualiza nome do usuário quando token muda
+  useEffect(() => {
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        console.log("Decoded token:", decoded);
+        setNomeUsuario(decoded.nome || "Usuário");
+      } catch (err) {
+        console.error("Erro ao decodificar token:", err);
+        setNomeUsuario(null);
+      }
+    } else {
+      setNomeUsuario(null);
+    }
+  }, [token]);
+
+  // Atualiza token no estado se mudar localStorage (outras abas)
+  useEffect(() => {
+    const onStorageChange = () => {
+      setToken(localStorage.getItem("token"));
+    };
+    window.addEventListener("storage", onStorageChange);
+    return () => window.removeEventListener("storage", onStorageChange);
+  }, []);
+
+  // Função para logout limpa token e redireciona
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setToken(null);
+    navigate("/login");
+  };
+
+  const handlePerfilClick = () => {
+    if (!token) {
+      return navigate("/login");
+    }
+    try {
+      const decoded = jwtDecode(token);
+      const role = decoded.role || decoded.tipo;
+      if (role === "admin") {
+        navigate("/admin");
+      } else if (role === "cliente") {
+        navigate("/cliente");
+      } else {
+        navigate("/login");
+      }
+    } catch (error) {
+      console.error("Token inválido:", error);
+      navigate("/login");
+    }
+  };
+
+  // Fetch categorias (mock)
+  useEffect(() => {
+    async function fetchCategorias() {
       const data = [
         { id: 1, nome: "Relés de estado sólido", slug: "EstadoSolido" },
         {
@@ -36,10 +90,8 @@ const NavBarComp = () => {
         },
         { id: 3, nome: "Temporizador digital", slug: "TemporizadorDigital" },
       ];
-
       setCategorias(data);
     }
-
     fetchCategorias();
   }, []);
 
@@ -49,7 +101,7 @@ const NavBarComp = () => {
     location.pathname.startsWith(`/${cat.slug}`)
   );
 
-  const cartItemCount = 3;
+  const cartItemCount = 3; // Pode substituir por Zustand ou outro estado
 
   return (
     <Navbar expand="lg" bg="dark" variant="dark" className="custom-navbar">
@@ -93,9 +145,31 @@ const NavBarComp = () => {
               Sobre
             </Nav.Link>
 
-            <Nav.Link as={NavLink} to="/login" className="icon-hover">
-              <FaUserCircle size={20} />
-            </Nav.Link>
+            {token ? (
+              <Dropdown align="end">
+                <Dropdown.Toggle
+                  variant="dark"
+                  id="dropdown-user"
+                  className="icon-hover"
+                >
+                  <FaUserCircle size={20} />
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu>
+                  <Dropdown.Header>{nomeUsuario}</Dropdown.Header>
+                  <Dropdown.Item onClick={handlePerfilClick}>
+                    Minha Conta
+                  </Dropdown.Item>
+
+                  <Dropdown.Divider />
+                  <Dropdown.Item onClick={handleLogout}>Sair</Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            ) : (
+              <Nav.Link onClick={handlePerfilClick} className="icon-hover">
+                <FaUserCircle size={20} />
+              </Nav.Link>
+            )}
 
             <Nav.Link
               as={NavLink}
