@@ -27,7 +27,9 @@ const ProdutosAdmin = () => {
               <Button variant="warning" size="sm" className="me-2">
                 Editar
               </Button>
-              <Button className="btn btn-sm ed-danger me-2">Excluir</Button>
+              <Button variant="danger" size="sm" className="me-2">
+                Excluir
+              </Button>
               <Button variant="secondary" size="sm">
                 Ocultar
               </Button>

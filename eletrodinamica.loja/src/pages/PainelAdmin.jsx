@@ -9,6 +9,13 @@ import {
   Alert,
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import {
+  FaBoxOpen,
+  FaTags,
+  FaUsers,
+  FaBookOpen,
+  FaEnvelope,
+} from "react-icons/fa";
 
 const PainelAdmin = () => {
   const navigate = useNavigate();
@@ -17,7 +24,6 @@ const PainelAdmin = () => {
   const [mensagem, setMensagem] = useState(null);
   const [erro, setErro] = useState(null);
 
-  // Função para carregar o email atual da API
   const carregarEmail = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -43,7 +49,6 @@ const PainelAdmin = () => {
     carregarEmail();
   }, []);
 
-  // Função para atualizar o email via API
   const salvarEmail = async () => {
     setErro(null);
     setMensagem(null);
@@ -73,74 +78,118 @@ const PainelAdmin = () => {
 
   return (
     <Container className="mt-5 mb-5">
-      <h2 className="mb-4">Painel Administrativo</h2>
+      <h2 className="mb-4 text-center text-danger fw-bold">
+        Painel Administrativo
+      </h2>
       <Row className="g-4">
-        {/* Seus cards atuais */}
         <Col md={4}>
-          <Card>
-            <Card.Body>
-              <Card.Title>Produtos</Card.Title>
-              <Card.Text>Gerencie os produtos da loja virtual.</Card.Text>
+          <Card className="shadow-sm h-100">
+            <Card.Body className="d-flex flex-column">
+              <Card.Title className="d-flex align-items-center gap-2 text-danger fw-semibold">
+                <FaBoxOpen size={24} />
+                Produtos
+              </Card.Title>
+              <Card.Text className="flex-grow-1">
+                Gerencie os produtos da loja virtual com facilidade.
+              </Card.Text>
               <Button
                 variant="danger"
                 onClick={() => navigate("/admin/produtos")}
+                className="mt-auto"
               >
-                Acessar
+                Acessar Produtos
               </Button>
             </Card.Body>
           </Card>
         </Col>
 
         <Col md={4}>
-          <Card>
-            <Card.Body>
-              <Card.Title>Clientes</Card.Title>
-              <Card.Text>Pesquisar clientes e visualizar cotações.</Card.Text>
+          <Card className="shadow-sm h-100">
+            <Card.Body className="d-flex flex-column">
+              <Card.Title className="d-flex align-items-center gap-2 text-warning fw-semibold">
+                <FaTags size={24} />
+                Categorias
+              </Card.Title>
+              <Card.Text className="flex-grow-1">
+                Organize e controle as categorias disponíveis.
+              </Card.Text>
               <Button
-                variant="danger"
+                variant="warning"
+                onClick={() => navigate("/admin/categorias")}
+                className="mt-auto"
+              >
+                Acessar Categorias
+              </Button>
+            </Card.Body>
+          </Card>
+        </Col>
+
+        <Col md={4}>
+          <Card className="shadow-sm h-100">
+            <Card.Body className="d-flex flex-column">
+              <Card.Title className="d-flex align-items-center gap-2 text-primary fw-semibold">
+                <FaUsers size={24} />
+                Clientes
+              </Card.Title>
+              <Card.Text className="flex-grow-1">
+                Pesquise clientes e visualize suas cotações.
+              </Card.Text>
+              <Button
+                variant="primary"
                 onClick={() => navigate("/admin/clientes")}
+                className="mt-auto"
               >
-                Acessar
+                Acessar Clientes
               </Button>
             </Card.Body>
           </Card>
         </Col>
 
-        <Col md={4}>
-          <Card>
-            <Card.Body>
-              <Card.Title>Catálogo</Card.Title>
-              <Card.Text>Atualize o catálogo de controladores.</Card.Text>
+        <Col md={6}>
+          <Card className="shadow-sm h-100">
+            <Card.Body className="d-flex flex-column">
+              <Card.Title className="d-flex align-items-center gap-2 text-success fw-semibold">
+                <FaBookOpen size={24} />
+                Catálogo
+              </Card.Title>
+              <Card.Text className="flex-grow-1">
+                Atualize o catálogo de controladores disponível para os
+                clientes.
+              </Card.Text>
               <Button
-                variant="danger"
+                variant="success"
                 onClick={() => navigate("/admin/catalogo")}
+                className="mt-auto"
               >
-                Acessar
+                Acessar Catálogo
               </Button>
             </Card.Body>
           </Card>
         </Col>
 
-        <Col md={12}>
-          <Card>
+        <Col md={6}>
+          <Card className="shadow-sm h-100">
             <Card.Body>
-              <Card.Title>E-mail para Recebimento das Cotações</Card.Title>
+              <Card.Title className="d-flex align-items-center gap-2 text-danger fw-semibold">
+                <FaEnvelope size={24} />
+                E-mail para Recebimento das Cotações
+              </Card.Title>
               {loading ? (
                 <p>Carregando...</p>
               ) : (
                 <>
                   <Form.Control
                     type="email"
-                    placeholder="Digite o e-mail"
+                    placeholder="Digite o e-mail para receber cotações"
                     value={emailCotacoes}
                     onChange={(e) => setEmailCotacoes(e.target.value)}
                   />
                   <Button
-                    className="mt-3"
                     variant="danger"
+                    className="mt-3 w-100"
                     onClick={salvarEmail}
                   >
-                    Salvar
+                    Salvar E-mail
                   </Button>
                   {mensagem && (
                     <Alert variant="success" className="mt-3">

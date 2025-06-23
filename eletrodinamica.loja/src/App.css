@@ -78,6 +78,61 @@
   background-color: #d40000 !important;
 }
 
+.btn-warning {
+  background-color: #f9a825;
+  border-color: #f9a825;
+  color: #212529;
+  border: none !important;
+  border-radius: 20px !important;
+  padding: 10px 15px !important;
+  transition: background-color 0.3s ease !important;
+}
+
+.btn-warning:hover {
+  background-color: #c17900;
+  border-color: #c17900;
+  color: #212529;
+}
+
+.btn-primary {
+  background-color: #1565c0;
+  border-color: #1565c0;
+  color: #fff;
+  border: none !important;
+  border-radius: 20px !important;
+  padding: 10px 15px !important;
+  transition: background-color 0.3s ease !important;
+}
+
+.btn-primary:hover {
+  background-color: #003c8f;
+  border-color: #003c8f;
+  color: #fff;
+}
+
+.btn-success {
+  background-color: #2e7d32;
+  border-color: #2e7d32;
+  color: #fff;
+  border: none !important;
+  border-radius: 20px !important;
+  padding: 10px 15px !important;
+  transition: background-color 0.3s ease !important;
+}
+
+.btn-success:hover {
+  background-color: #1b4d1b;
+  border-color: #1b4d1b;
+  color: #fff;
+}
+
+.btn-secondary {
+  border: none !important;
+  border-radius: 20px !important;
+  padding: 10px 15px !important;
+  transition: background-color 0.3s ease !important;
+}
+
 /* Classe utilitária do Bootstrap sobrescrita */
 
 /* Remove the outline (blue shadow) when the input is focused */
