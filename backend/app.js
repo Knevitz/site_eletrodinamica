@@ -15,11 +15,19 @@ const authRoutes = require("./routes/auth");
 
 const app = express();
 
-const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3001";
+const ALLOWED_ORIGINS = process.env.FRONTEND_URL
+  ? process.env.FRONTEND_URL.split(",").map((o) => o.trim())
+  : ["http://localhost:3001", "http://localhost:3002"];
 
 app.use(
   cors({
-    origin: FRONTEND_URL,
+    origin: (origin, callback) => {
+      if (!origin || ALLOWED_ORIGINS.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
@@ -27,18 +35,18 @@ app.use(
 app.use(
   helmet({
     contentSecurityPolicy: {
+      useDefaults: true,
       directives: {
-        defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", FRONTEND_URL],
-        styleSrc: ["'self'", "'unsafe-inline'", FRONTEND_URL],
-        imgSrc: ["'self'", FRONTEND_URL, "data:", "blob:"],
-        connectSrc: ["'self'", FRONTEND_URL],
-        fontSrc: ["'self'", FRONTEND_URL],
+        defaultSrc: ["'self'", ...ALLOWED_ORIGINS],
+        scriptSrc: ["'self'", "'unsafe-inline'", ...ALLOWED_ORIGINS],
+        styleSrc: ["'self'", "'unsafe-inline'", ...ALLOWED_ORIGINS],
+        imgSrc: ["'self'", "data:", "blob:", ...ALLOWED_ORIGINS],
+        connectSrc: ["'self'", ...ALLOWED_ORIGINS],
+        fontSrc: ["'self'", "https:", "data:"],
         objectSrc: ["'none'"],
         upgradeInsecureRequests: [],
       },
     },
-    crossOriginResourcePolicy: { policy: "cross-origin" },
     crossOriginEmbedderPolicy: false,
   })
 );
@@ -46,29 +54,30 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Servir arquivos estáticos (imagens e PDFs)
-// O cabeçalho Cross-Origin-Resource-Policy é essencial para liberar acesso ao frontend
 app.use(
   "/uploads",
   express.static(path.join(__dirname, "uploads"), {
     setHeaders: (res) => {
       res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
-      res.setHeader("Access-Control-Allow-Origin", FRONTEND_URL);
+      res.setHeader("Access-Control-Allow-Origin", "*");
+      res.setHeader(
+        "Access-Control-Allow-Headers",
+        "Origin, X-Requested-With, Content-Type, Accept"
+      );
+      res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
     },
   })
 );
 
-// Rate limiting para evitar ataques de força bruta
 app.use(
   rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutos
+    windowMs: 15 * 60 * 1000,
     max: 100,
     standardHeaders: true,
     legacyHeaders: false,
   })
 );
 
-// Rotas da API
 app.use("/api/usuarios", usuarioRoutes);
 app.use("/api/produtos", produtoRoutes);
 app.use("/api/categorias", categoriaRoutes);
@@ -80,7 +89,6 @@ app.get("/", (req, res) => {
   res.send("API da Eletrodinâmica está rodando");
 });
 
-// Conexão com banco e exportação do app
 sequelize
   .authenticate()
   .then(() => console.log("Banco de dados conectado com sucesso"))

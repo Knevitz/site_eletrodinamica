@@ -1,12 +1,32 @@
-import React from "react";
-import { Container, Button } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Container, Button, Spinner, Alert } from "react-bootstrap";
 import ImagemComTexto from "../../components/ImagemComTexto";
 import ControlEletr from "../../assets/prodEletrod.jpg";
-import { Link } from "react-router-dom";
-import produtos from "../../data/controladores.json";
-import catalogoPDF from "../../assets/pdf/Catalogo-2023-rev.7.pdf";
 
 const Controladores = () => {
+  const [produtos, setProdutos] = useState([]);
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState(null);
+
+  useEffect(() => {
+    const buscarProdutos = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.REACT_APP_API_URL}/api/produtos/ativos`
+        );
+        if (!res.ok) throw new Error("Erro ao buscar produtos");
+        const data = await res.json();
+        setProdutos(data || []);
+      } catch (err) {
+        setErro("Erro ao carregar os produtos.");
+      } finally {
+        setCarregando(false);
+      }
+    };
+
+    buscarProdutos();
+  }, []);
+
   return (
     <div>
       <Container>
@@ -22,23 +42,29 @@ const Controladores = () => {
           Clique abaixo e veja detalhadamente cada produto:
         </p>
 
+        {carregando && <Spinner animation="border" className="mb-3" />}
+        {erro && <Alert variant="danger">{erro}</Alert>}
+
         {produtos.map((produto) => (
           <p key={produto.slug}>
-            <Link
-              to={`/controladores/${produto.slug}`}
+            <a
+              href={`http://localhost:3001/produto/${produto.slug}`}
+              target="_blank"
+              rel="noopener noreferrer"
               className="link-vermelho"
             >
-              {produto.titulo}
-            </Link>
+              {produto.nome}
+            </a>
           </p>
         ))}
+
         <p className="mb-4">
           <strong>Veja abaixo o catálogo Eletrodinâmica&reg;</strong>
         </p>
         <div className="mb-4">
           <Button
             variant="danger"
-            href={catalogoPDF}
+            href={`${process.env.REACT_APP_API_URL}/api/catalogo/arquivo`}
             target="_blank"
             rel="noopener noreferrer"
           >
