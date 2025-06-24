@@ -11,7 +11,7 @@ import {
   Dropdown,
 } from "react-bootstrap";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode } from "jwt-decode"; // corrigido import
 
 import { FaUserCircle, FaShoppingCart } from "react-icons/fa";
 import "../App.css";
@@ -20,18 +20,16 @@ import logo from "../assets/eletrodinamica.png";
 const NavBarComp = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [categorias, setCategorias] = useState([]);
 
-  // Estado para token e nome do usuário
+  const [categorias, setCategorias] = useState([]);
   const [token, setToken] = useState(localStorage.getItem("token") || null);
   const [nomeUsuario, setNomeUsuario] = useState(null);
 
-  // Atualiza nome do usuário quando token muda
+  // Decodificar token para pegar nome do usuário
   useEffect(() => {
     if (token) {
       try {
         const decoded = jwtDecode(token);
-        console.log("Decoded token:", decoded);
         setNomeUsuario(decoded.nome || "Usuário");
       } catch (err) {
         console.error("Erro ao decodificar token:", err);
@@ -42,7 +40,7 @@ const NavBarComp = () => {
     }
   }, [token]);
 
-  // Atualiza token no estado se mudar localStorage (outras abas)
+  // Atualizar token se mudar em outra aba
   useEffect(() => {
     const onStorageChange = () => {
       setToken(localStorage.getItem("token"));
@@ -51,17 +49,17 @@ const NavBarComp = () => {
     return () => window.removeEventListener("storage", onStorageChange);
   }, []);
 
-  // Função para logout limpa token e redireciona
+  // Função logout
   const handleLogout = () => {
     localStorage.removeItem("token");
     setToken(null);
     navigate("/login");
   };
 
+  // Navegar para perfil dependendo do role
   const handlePerfilClick = () => {
-    if (!token) {
-      return navigate("/login");
-    }
+    if (!token) return navigate("/login");
+
     try {
       const decoded = jwtDecode(token);
       const role = decoded.role || decoded.tipo;
@@ -72,36 +70,42 @@ const NavBarComp = () => {
       } else {
         navigate("/login");
       }
-    } catch (error) {
-      console.error("Token inválido:", error);
+    } catch (err) {
+      console.error("Token inválido:", err);
       navigate("/login");
     }
   };
 
-  // Fetch categorias (mock)
+  // Buscar categorias da API
   useEffect(() => {
-    async function fetchCategorias() {
-      const data = [
-        { id: 1, nome: "Relés de estado sólido", slug: "EstadoSolido" },
-        {
-          id: 2,
-          nome: "Controladores e relés industriais",
-          slug: "controladores",
-        },
-        { id: 3, nome: "Temporizador digital", slug: "TemporizadorDigital" },
-      ];
-      setCategorias(data);
-    }
+    const fetchCategorias = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.REACT_APP_API_URL}/api/categorias`
+        );
+        if (!res.ok) throw new Error("Erro ao carregar categorias");
+        const data = await res.json();
+        setCategorias(data);
+      } catch (err) {
+        console.error("Erro ao carregar categorias:", err);
+        setCategorias([]);
+      }
+    };
     fetchCategorias();
   }, []);
 
+  // Evita mostrar navbar na página de login (ajuste se precisar em outras páginas)
   if (location.pathname === "/login") return null;
 
-  const isProductsActive = categorias.some((cat) =>
-    location.pathname.startsWith(`/${cat.slug}`)
+  // Verifica se a rota ativa corresponde a alguma categoria para marcar active no dropdown
+  const isProductsActive = categorias.some(
+    (cat) =>
+      location.pathname === `/categoria/${cat.slug}` ||
+      location.pathname.startsWith(`/categoria/${cat.slug}/`)
   );
 
-  const cartItemCount = 3; // Pode substituir por Zustand ou outro estado
+  // Contagem de itens do carrinho (substituir com estado real depois)
+  const cartItemCount = 3;
 
   return (
     <Navbar expand="lg" bg="dark" variant="dark" className="custom-navbar">
@@ -126,15 +130,20 @@ const NavBarComp = () => {
               id="navbarDropdown"
               className={isProductsActive ? "active" : ""}
             >
-              {categorias.map((categoria) => (
-                <NavDropdown.Item
-                  key={categoria.id}
-                  as={NavLink}
-                  to={`/${categoria.slug}`}
-                >
-                  {categoria.nome}
-                </NavDropdown.Item>
-              ))}
+              {categorias.length === 0 ? (
+                <NavDropdown.Item disabled>Carregando...</NavDropdown.Item>
+              ) : (
+                categorias.map((categoria) => (
+                  <NavDropdown.Item
+                    key={categoria.id}
+                    as={NavLink}
+                    to={`/categoria/${categoria.slug}`}
+                    end
+                  >
+                    {categoria.nome}
+                  </NavDropdown.Item>
+                ))
+              )}
             </NavDropdown>
 
             <Nav.Link

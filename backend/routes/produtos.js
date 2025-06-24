@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+
 const produtoController = require("../controllers/produtoController");
 const authMiddleware = require("../middleware/authMiddleware");
 const upload = require("../middleware/upload");
@@ -7,20 +8,48 @@ const upload = require("../middleware/upload");
 const autenticarToken = authMiddleware.autenticarToken;
 const apenasAdmin = authMiddleware.apenasAdmin;
 
-// Rotas protegidas (somente admin)
+// Rotas públicas
+// Listar produtos ativos
+router.get("/ativos", produtoController.listarProdutosAtivos);
+
+// Buscar produto por slug (ativo/public)
+router.get("/slug/:slug", produtoController.buscarProdutoPorSlug);
+
+// Listar produtos ativos por categoria (slug)
+router.get("/categoria/:slug", produtoController.listarProdutosPorCategoria);
+
+// Rotas protegidas - somente admin
+
+// Listar todos os produtos (admin)
+router.get(
+  "/admin",
+  autenticarToken,
+  apenasAdmin,
+  produtoController.listarTodosProdutos
+);
+
+// Buscar produto por ID (admin)
+router.get(
+  "/:id",
+  autenticarToken,
+  apenasAdmin,
+  produtoController.buscarProdutoPorId
+);
+
+// Criar produto (upload de imagem e PDF)
 router.post(
   "/",
-  authMiddleware.autenticarToken,
-  authMiddleware.apenasAdmin,
+  autenticarToken,
+  apenasAdmin,
   upload.fields([{ name: "imagem" }, { name: "pdf" }]),
   produtoController.criarProduto
 );
 
-// Atualizar produto
+// Atualizar produto (upload de imagem e PDF)
 router.patch(
   "/:id",
-  authMiddleware.autenticarToken,
-  authMiddleware.apenasAdmin,
+  autenticarToken,
+  apenasAdmin,
   upload.fields([{ name: "imagem" }, { name: "pdf" }]),
   produtoController.atualizarProduto
 );
@@ -28,30 +57,9 @@ router.patch(
 // Excluir produto
 router.delete(
   "/:id",
-  authMiddleware.autenticarToken,
-  authMiddleware.apenasAdmin,
+  autenticarToken,
+  apenasAdmin,
   produtoController.excluirProduto
-);
-
-// listar produtos ativos
-router.get("/ativos", produtoController.listarProdutosAtivos);
-router.get(
-  "/:id",
-  autenticarToken,
-  apenasAdmin,
-  produtoController.buscarProdutoPorId
-);
-router.get(
-  "/",
-  autenticarToken,
-  apenasAdmin,
-  produtoController.listarTodosProdutos
-);
-router.get(
-  "/admin",
-  authMiddleware.autenticarToken,
-  authMiddleware.apenasAdmin,
-  produtoController.listarTodosProdutos
 );
 
 module.exports = router;

@@ -12,6 +12,7 @@ import NavBarComp from "./components/NavBarComp";
 import FooterComp from "./components/FooterComp";
 
 // Páginas públicas
+import ProdutoDetalhe from "./pages/ProdutoDetalhe";
 import Home from "./pages/Home";
 import Carrinho from "./pages/Carrinho";
 import Login from "./pages/login";
@@ -19,7 +20,7 @@ import RecuperarSenha from "./pages/RecuperarSenha";
 import RedefinirSenha from "./pages/RedefinirSenha";
 import Registrar from "./pages/Registrar";
 import CategoriasPublicas from "./pages/CategoriasPublicas";
-
+import ProdutosPorCategoria from "./components/ProdutosPorCategoria";
 // Cliente
 import ContaCliente from "./pages/ContaCliente";
 
@@ -32,6 +33,7 @@ import AtualizarCatalogo from "./components/AtualizarCatalogo";
 import CategoriasAdmin from "./pages/CategoriasAdmin";
 import CategoriaCriar from "./pages/CategoriaCriar";
 import CategoriaEditar from "./pages/CategoriaEditar";
+import ProdutoForm from "./components/ProdutoForm";
 
 const AppContent = () => {
   const location = useLocation();
@@ -56,6 +58,12 @@ const AppContent = () => {
             <Route path="/redefinir-senha" element={<RedefinirSenha />} />
             <Route path="/categorias" element={<CategoriasPublicas />} />
 
+            {/* Rota para página de categoria */}
+            <Route path="/categoria/:slug" element={<ProdutosPorCategoria />} />
+
+            {/* Rota para página de produto */}
+            <Route path="/produto/:slug" element={<ProdutoDetalhe />} />
+
             {/* Rotas protegidas - cliente */}
             <Route
               path="/cliente"
@@ -77,9 +85,21 @@ const AppContent = () => {
               <Route path="categorias/:id" element={<CategoriaEditar />} />
 
               <Route path="produtos" element={<ProdutosAdmin />} />
+              <Route
+                path="produtos/novo"
+                element={<ProdutoForm modo="criar" />}
+              />
+              <Route
+                path="produtos/:id"
+                element={<ProdutoForm modo="editar" />}
+              />
+
               <Route path="clientes" element={<ClientesAdmin />} />
               <Route path="catalogo" element={<AtualizarCatalogo />} />
             </Route>
+
+            {/* Rota coringa para evitar conflito com categoria e produto */}
+            {/* Se quiser, aqui você pode colocar uma página 404 ou similar */}
           </Routes>
         </Container>
       </div>

@@ -150,35 +150,6 @@
   flex: 1 !important;
 }
 
-/* CardComp.css */
-.card-img-top {
-  height: 200px !important;
-  width: 100% !important;
-  object-fit: contain !important;
-  padding: 10px !important;
-  transition: filter 0.3s ease; /* Transição da cor */
-}
-.card:hover .card-img-top {
-  filter: grayscale(0%);
-}
-.card {
-  transition: all 0.3s ease !important;
-  border: 1px solid #000000 !important;
-  min-width: 400px;
-  height: auto;
-}
-
-.card:hover {
-  box-shadow: 0 4px 8px #000000 !important;
-}
-.card:hover {
-  filter: grayscale(
-    0%
-  ) !important; /* Faz o card inteiro (imagem + conteúdo) ter efeito de cor */
-}
-.card:hover {
-  transform: translateY(-15px) !important;
-}
 .navbar-nav .nav-item.active > .nav-link.dropdown-toggle {
   background-color: white !important;
   color: #d40000 !important;
