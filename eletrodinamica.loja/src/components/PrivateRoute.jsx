@@ -6,22 +6,23 @@ const PrivateRoute = ({ allowedRoles }) => {
   const token = localStorage.getItem("token");
 
   if (!token) {
-    // Não está logado, redireciona para login
+    // Não está logado → redireciona para login
     return <Navigate to="/login" replace />;
   }
 
   try {
     const decoded = jwtDecode(token);
+
     if (!allowedRoles.includes(decoded.tipo)) {
-      // Usuário não tem permissão para essa rota
-      return <Navigate to="/" replace />; // Redireciona para home, por exemplo
+      // Está logado, mas não tem permissão para essa rota
+      return <Navigate to="/" replace />;
     }
   } catch (error) {
-    // Token inválido
+    // Token inválido (mal formado ou expirado)
     return <Navigate to="/login" replace />;
   }
 
-  // Se tudo certo, renderiza os componentes filhos (rotas protegidas)
+  // Tudo certo → renderiza os componentes filhos da rota protegida
   return <Outlet />;
 };
 

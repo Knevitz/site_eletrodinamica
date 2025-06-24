@@ -21,6 +21,7 @@ import RedefinirSenha from "./pages/RedefinirSenha";
 import Registrar from "./pages/Registrar";
 import CategoriasPublicas from "./pages/CategoriasPublicas";
 import ProdutosPorCategoria from "./components/ProdutosPorCategoria";
+
 // Cliente
 import ContaCliente from "./pages/ContaCliente";
 
@@ -34,6 +35,7 @@ import CategoriasAdmin from "./pages/CategoriasAdmin";
 import CategoriaCriar from "./pages/CategoriaCriar";
 import CategoriaEditar from "./pages/CategoriaEditar";
 import ProdutoForm from "./components/ProdutoForm";
+import Empresa from "./pages/Empresa"; // ✅ nova página
 
 const AppContent = () => {
   const location = useLocation();
@@ -57,14 +59,10 @@ const AppContent = () => {
             <Route path="/recuperar-senha" element={<RecuperarSenha />} />
             <Route path="/redefinir-senha" element={<RedefinirSenha />} />
             <Route path="/categorias" element={<CategoriasPublicas />} />
-
-            {/* Rota para página de categoria */}
             <Route path="/categoria/:slug" element={<ProdutosPorCategoria />} />
-
-            {/* Rota para página de produto */}
             <Route path="/produto/:slug" element={<ProdutoDetalhe />} />
 
-            {/* Rotas protegidas - cliente */}
+            {/* Cliente logado */}
             <Route
               path="/cliente"
               element={<PrivateRoute allowedRoles={["cliente"]} />}
@@ -72,18 +70,17 @@ const AppContent = () => {
               <Route index element={<ContaCliente />} />
             </Route>
 
-            {/* Rotas protegidas - admin */}
+            {/* Admin logado */}
             <Route
               path="/admin"
               element={<PrivateRoute allowedRoles={["admin"]} />}
             >
               <Route index element={<PainelAdmin />} />
-
-              {/* ROTAS DE CATEGORIA - ordem importa */}
+              {/* Categorias */}
               <Route path="categorias" element={<CategoriasAdmin />} />
               <Route path="categorias/novo" element={<CategoriaCriar />} />
               <Route path="categorias/:id" element={<CategoriaEditar />} />
-
+              {/* Produtos */}
               <Route path="produtos" element={<ProdutosAdmin />} />
               <Route
                 path="produtos/novo"
@@ -93,13 +90,14 @@ const AppContent = () => {
                 path="produtos/:id"
                 element={<ProdutoForm modo="editar" />}
               />
-
+              {/* Clientes */}
               <Route path="clientes" element={<ClientesAdmin />} />
+              {/* Catálogo */}
               <Route path="catalogo" element={<AtualizarCatalogo />} />
+              {/* Empresa */}
+              <Route path="empresa" element={<Empresa />} />{" "}
+              {/* ✅ nova rota */}
             </Route>
-
-            {/* Rota coringa para evitar conflito com categoria e produto */}
-            {/* Se quiser, aqui você pode colocar uma página 404 ou similar */}
           </Routes>
         </Container>
       </div>

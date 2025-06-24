@@ -61,7 +61,7 @@ const ProdutosAdmin = () => {
       const res = await fetch(
         `${process.env.REACT_APP_API_URL}/api/produtos/${id}`,
         {
-          method: "PATCH", // mudar de PUT para PATCH
+          method: "PATCH",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
