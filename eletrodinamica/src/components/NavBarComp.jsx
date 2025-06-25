@@ -79,14 +79,8 @@ const NavBarComp = () => {
                 </NavDropdown.Item>
               </NavDropdown>
 
-              <Nav.Link as={NavLink} to="/contato">
-                Contato
-              </Nav.Link>
-              <Nav.Link as={NavLink} to="/trabalhe">
-                Trabalhe conosco
-              </Nav.Link>
               <Nav.Link
-                href="http://localhost:3000/"
+                href={process.env.REACT_APP_LOJA_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 id="loja-link"

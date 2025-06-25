@@ -99,7 +99,6 @@ const NavBarComp = () => {
       location.pathname === `/categoria/${cat.slug}` ||
       location.pathname.startsWith(`/categoria/${cat.slug}/`)
   );
-
   return (
     <Navbar expand="lg" bg="dark" variant="dark" className="custom-navbar">
       <Container fluid>
@@ -140,7 +139,7 @@ const NavBarComp = () => {
             </NavDropdown>
 
             <Nav.Link
-              href="http://localhost:3001/"
+              href={process.env.REACT_APP_INSTITUCIONAL_URL}
               target="_blank"
               rel="noopener noreferrer"
             >

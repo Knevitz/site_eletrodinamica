@@ -6,8 +6,6 @@ import FooterComp from "./components/FooterComp";
 import { Container } from "react-bootstrap";
 import NavBarComp from "./components/NavBarComp";
 import Home from "./pages/Home";
-import Contato from "./pages/Contato";
-import Trabalhe from "./pages/Trabalhe";
 import Paineis from "./pages/Paineis";
 import Controladores from "./pages//controladores/Controladores";
 import Venda from "./pages/Venda";
@@ -23,8 +21,6 @@ const App = () => {
           <ScrollToTop />
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/contato" element={<Contato />} />
-            <Route path="/trabalhe" element={<Trabalhe />} />
             <Route path="/paineis" element={<Paineis />} />
             <Route path="/controladores" element={<Controladores />} />
             <Route path="/venda" element={<Venda />} />
