@@ -176,6 +176,10 @@ const PainelAdmin = () => {
                     <strong>E-mail Administrativo:</strong>
                     <p>{emailEmpresa || "Não encontrado"}</p>
                   </div>
+                  <div className="mb-3">
+                    <strong>E-mail de cotações:</strong>
+                    <p>{emailCotacoes || "Não encontrado"}</p>
+                  </div>
                 </>
               )}
             </Card.Body>
