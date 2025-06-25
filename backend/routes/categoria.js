@@ -9,6 +9,14 @@ const {
 // Listar categorias (público)
 router.get("/", categoriaController.listarCategorias);
 
+// Buscar uma categoria específica por ID (só admin)
+router.get(
+  "/:id",
+  autenticarToken,
+  apenasAdmin,
+  categoriaController.buscarCategoriaPorId
+);
+
 // Criar categoria (só admin)
 router.post(
   "/",

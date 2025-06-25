@@ -8,6 +8,16 @@ const router = express.Router();
 const pastaCatalogo = path.join(__dirname, "..", "uploads", "catalogo");
 const caminhoFinal = path.join(pastaCatalogo, "catalogo.pdf");
 
+// Rota para baixar/visualizar o catálogo PDF
+router.get("/arquivo", (req, res) => {
+  if (!fs.existsSync(caminhoFinal)) {
+    return res.status(404).json({ erro: "Catálogo não encontrado." });
+  }
+  res.sendFile(caminhoFinal);
+});
+
+// Rotas POST e PUT para upload (mantidas)
+
 router.post(
   "/",
   auth.autenticarToken,
@@ -15,14 +25,10 @@ router.post(
   upload.single("catalogo"),
   async (req, res) => {
     try {
-      // Se já existir um catálogo antigo, deleta
       if (fs.existsSync(caminhoFinal)) {
         fs.unlinkSync(caminhoFinal);
       }
-
-      // Move o novo PDF com nome fixo "catalogo.pdf"
       fs.renameSync(req.file.path, caminhoFinal);
-
       return res
         .status(200)
         .json({ mensagem: "Catálogo enviado com sucesso!" });
@@ -43,9 +49,7 @@ router.put(
       if (fs.existsSync(caminhoFinal)) {
         fs.unlinkSync(caminhoFinal);
       }
-
       fs.renameSync(req.file.path, caminhoFinal);
-
       return res
         .status(200)
         .json({ mensagem: "Catálogo atualizado com sucesso!" });

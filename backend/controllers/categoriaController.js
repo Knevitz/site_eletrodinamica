@@ -30,6 +30,23 @@ exports.listarCategorias = async (req, res) => {
   }
 };
 
+// Buscar uma categoria pelo ID
+exports.buscarCategoriaPorId = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const categoria = await Categoria.findByPk(id);
+
+    if (!categoria) {
+      return res.status(404).json({ erro: "Categoria não encontrada." });
+    }
+
+    return res.json(categoria);
+  } catch (error) {
+    console.error("Erro ao buscar categoria por ID:", error);
+    return res.status(500).json({ erro: "Erro ao buscar categoria." });
+  }
+};
+
 // Atualizar categoria
 exports.atualizarCategoria = async (req, res) => {
   try {

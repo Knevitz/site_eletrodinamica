@@ -63,7 +63,15 @@
   border-radius: 10px !important;
   padding: 10px 15px !important;
 }
+.btn-outline-danger {
+  color: #d40000 !important; /* texto */
+  border-color: #d40000 !important; /* borda */
+}
 
+.btn-outline-danger:hover {
+  background-color: #d40000 !important; /* fundo no hover */
+  color: white !important;
+}
 /* Estilo do botão danger, se usado em outro ponto */
 .btn-danger {
   background-color: #d40000 !important;
@@ -76,6 +84,61 @@
 
 .btn-danger:hover {
   background-color: #d40000 !important;
+}
+
+.btn-warning {
+  background-color: #f9a825;
+  border-color: #f9a825;
+  color: #212529;
+  border: none !important;
+  border-radius: 20px !important;
+  padding: 10px 15px !important;
+  transition: background-color 0.3s ease !important;
+}
+
+.btn-warning:hover {
+  background-color: #c17900;
+  border-color: #c17900;
+  color: #212529;
+}
+
+.btn-primary {
+  background-color: #1565c0;
+  border-color: #1565c0;
+  color: #fff;
+  border: none !important;
+  border-radius: 20px !important;
+  padding: 10px 15px !important;
+  transition: background-color 0.3s ease !important;
+}
+
+.btn-primary:hover {
+  background-color: #003c8f;
+  border-color: #003c8f;
+  color: #fff;
+}
+
+.btn-success {
+  background-color: #2e7d32;
+  border-color: #2e7d32;
+  color: #fff;
+  border: none !important;
+  border-radius: 20px !important;
+  padding: 10px 15px !important;
+  transition: background-color 0.3s ease !important;
+}
+
+.btn-success:hover {
+  background-color: #1b4d1b;
+  border-color: #1b4d1b;
+  color: #fff;
+}
+
+.btn-secondary {
+  border: none !important;
+  border-radius: 20px !important;
+  padding: 10px 15px !important;
+  transition: background-color 0.3s ease !important;
 }
 
 /* Classe utilitária do Bootstrap sobrescrita */
@@ -95,35 +158,6 @@
   flex: 1 !important;
 }
 
-/* CardComp.css */
-.card-img-top {
-  height: 200px !important;
-  width: 100% !important;
-  object-fit: contain !important;
-  padding: 10px !important;
-  transition: filter 0.3s ease; /* Transição da cor */
-}
-.card:hover .card-img-top {
-  filter: grayscale(0%);
-}
-.card {
-  transition: all 0.3s ease !important;
-  border: 1px solid #000000 !important;
-  min-width: 400px;
-  height: auto;
-}
-
-.card:hover {
-  box-shadow: 0 4px 8px #000000 !important;
-}
-.card:hover {
-  filter: grayscale(
-    0%
-  ) !important; /* Faz o card inteiro (imagem + conteúdo) ter efeito de cor */
-}
-.card:hover {
-  transform: translateY(-15px) !important;
-}
 .navbar-nav .nav-item.active > .nav-link.dropdown-toggle {
   background-color: white !important;
   color: #d40000 !important;
@@ -294,4 +328,59 @@ textarea.form-control {
 .login-card {
   border: 2px solid #d40000 !important;
   border-radius: 10px; /* ou ajuste como preferir */
+}
+
+.icon-hover {
+  background-color: transparent !important;
+  border: 1px solid transparent !important;
+  border-radius: 6px;
+  padding: 4px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white !important; /* ícone branco */
+}
+
+.icon-hover:hover,
+.icon-hover:focus {
+  background-color: white !important; /* quadrado branco no hover */
+  border-color: white !important; /* borda branca no hover */
+  color: #d40000 !important; /* ícone vermelho no hover */
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  background-image: none !important; /* remove o SVG padrão do Bootstrap */
+  display: inline-block !important;
+  width: 2rem !important;
+  height: 2rem !important;
+  background-color: transparent !important;
+  mask-size: contain !important;
+  -webkit-mask-size: contain !important;
+  mask-repeat: no-repeat !important;
+  -webkit-mask-repeat: no-repeat !important;
+  mask-position: center !important;
+  -webkit-mask-position: center !important;
+}
+
+.carousel-control-prev-icon {
+  mask-image: url("data:image/svg+xml;utf8,<svg fill='black' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M11.354 1.646a.5.5 0 0 0-.708 0L4.793 7.5l5.853 5.854a.5.5 0 0 0 .708-.708L6.207 7.5l5.147-5.146a.5.5 0 0 0 0-.708z'/></svg>") !important;
+  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg fill='black' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M11.354 1.646a.5.5 0 0 0-.708 0L4.793 7.5l5.853 5.854a.5.5 0 0 0 .708-.708L6.207 7.5l5.147-5.146a.5.5 0 0 0 0-.708z'/></svg>") !important;
+}
+
+.carousel-control-next-icon {
+  mask-image: url("data:image/svg+xml;utf8,<svg fill='black' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M4.646 1.646a.5.5 0 0 1 .708 0L11.207 7.5 5.354 13.354a.5.5 0 0 1-.708-.708L9.793 7.5 4.646 2.354a.5.5 0 0 1 0-.708z'/></svg>") !important;
+  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg fill='black' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M4.646 1.646a.5.5 0 0 1 .708 0L11.207 7.5 5.354 13.354a.5.5 0 0 1-.708-.708L9.793 7.5 4.646 2.354a.5.5 0 0 1 0-.708z'/></svg>") !important;
+}
+
+.carousel.bg-dark .carousel-control-prev-icon,
+.carousel.bg-dark .carousel-control-next-icon {
+  background-color: white !important; /* ícones brancos sobre fundo escuro */
+}
+
+.carousel.bg-light .carousel-control-prev-icon,
+.carousel.bg-light .carousel-control-next-icon {
+  background-color: black !important; /* ícones pretos sobre fundo claro */
 }

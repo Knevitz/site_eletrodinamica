@@ -1,56 +1,99 @@
-import React, { useState } from "react";
-import { Container, Table } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Container, Table, Button, Spinner, Alert } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import { formatarCNPJ } from "../components/CNPJ";
+import api from "../services/axios";
 
 const ContaCliente = () => {
-  const [cliente] = useState({
-    razaoSocial: "Empresa Exemplo LTDA",
-    cnpj: "00.000.000/0001-00",
-    email: "cliente@email.com",
-    historico: [
-      {
-        id: "001",
-        data: "01/05/2025",
-        status: "Aguardando Resposta",
-        itens: 3,
-      },
-      { id: "002", data: "10/05/2025", status: "Respondido", itens: 5 },
-    ],
-  });
+  const [cliente, setCliente] = useState(null);
+  const [historico, setHistorico] = useState([]);
+  const [erro, setErro] = useState(null);
+  const [carregando, setCarregando] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchDados = async () => {
+      try {
+        const [resUsuario, resHistorico] = await Promise.all([
+          api.get("/api/usuarios/me"),
+          api.get("/api/cotacoes/minhas"),
+        ]);
+
+        setCliente(resUsuario.data);
+        setHistorico(resHistorico.data);
+      } catch (err) {
+        console.error(err);
+        setErro("Erro ao carregar dados do cliente.");
+      } finally {
+        setCarregando(false);
+      }
+    };
+
+    fetchDados();
+  }, []);
+
+  if (carregando) {
+    return (
+      <Container className="mt-5 text-center">
+        <Spinner animation="border" />
+      </Container>
+    );
+  }
+
+  if (erro) {
+    return (
+      <Container className="mt-5">
+        <Alert variant="danger">{erro}</Alert>
+      </Container>
+    );
+  }
 
   return (
     <Container className="mt-5">
-      <h2>Minha Conta</h2>
+      <h2 className="mb-3">Minha Conta</h2>
       <p>
-        <strong>Razão Social:</strong> {cliente.razaoSocial}
+        <strong>Nome / Razão Social:</strong> {cliente?.nome}
       </p>
       <p>
-        <strong>CNPJ:</strong> {cliente.cnpj}
+        <strong>CNPJ:</strong> {formatarCNPJ(cliente?.cnpj)}
       </p>
       <p>
-        <strong>Email:</strong> {cliente.email}
+        <strong>Email:</strong> {cliente?.email}
       </p>
 
+      <Button
+        variant="outline-danger"
+        className="mb-4"
+        onClick={() => navigate("/cliente/editar")}
+      >
+        Editar Dados
+      </Button>
+
       <h4 className="mt-4">Histórico de Cotações</h4>
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Data</th>
-            <th>Status</th>
-            <th>Itens</th>
-          </tr>
-        </thead>
-        <tbody>
-          {cliente.historico.map((cotacao) => (
-            <tr key={cotacao.id}>
-              <td>{cotacao.id}</td>
-              <td>{cotacao.data}</td>
-              <td>{cotacao.status}</td>
-              <td>{cotacao.itens}</td>
+      {historico.length === 0 ? (
+        <p>Você ainda não enviou nenhuma cotação.</p>
+      ) : (
+        <Table striped bordered hover>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Data</th>
+              <th>Itens</th>
+              <th>Status</th>
             </tr>
-          ))}
-        </tbody>
-      </Table>
+          </thead>
+          <tbody>
+            {historico.map((cotacao) => (
+              <tr key={cotacao.id}>
+                <td>{cotacao.id}</td>
+                <td>{new Date(cotacao.createdAt).toLocaleDateString()}</td>
+                <td>{cotacao.itens.length}</td>
+                <td>Enviado</td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      )}
     </Container>
   );
 };

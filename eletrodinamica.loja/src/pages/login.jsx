@@ -4,6 +4,8 @@ import CNPJ from "../components/CNPJ";
 import "../App.css";
 import "./login.css";
 import loginImage from "../assets/foto-divulgacao.jpg";
+import CampoSenha from "../components/CampoSenha";
+import api from "../services/axios";
 
 const Login = () => {
   const [cnpj, setCnpj] = useState("");
@@ -18,32 +20,31 @@ const Login = () => {
     const cnpjLimpo = cnpj.replace(/\D/g, "");
 
     try {
-      const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/auth/login`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ cnpj: cnpjLimpo, senha }),
-        }
-      );
+      const res = await api.post("/api/auth/login", {
+        cnpj: cnpjLimpo,
+        senha,
+      });
 
-      const data = await res.json();
+      const { token, usuario } = res.data;
 
-      if (!res.ok) {
-        throw new Error(data.erro || "Erro ao fazer login");
+      if (!token || !usuario) {
+        throw new Error("Resposta inesperada do servidor.");
       }
 
-      localStorage.setItem("token", data.token);
+      localStorage.setItem("token", token);
 
-      if (data.usuario?.tipo === "admin") {
+      if (usuario.tipo === "admin") {
         navigate("/admin");
-      } else if (data.usuario) {
+      } else if (usuario.tipo === "cliente") {
         navigate("/cliente");
       } else {
         setErro("Tipo de usuário inválido.");
       }
     } catch (err) {
-      setErro(err.message || "Erro inesperado");
+      console.error("Erro no login:", err);
+      setErro(
+        err.response?.data?.erro || err.message || "Erro ao tentar fazer login."
+      );
     }
   };
 
@@ -64,7 +65,7 @@ const Login = () => {
           <form style={{ width: "100%" }} onSubmit={handleLogin}>
             <div className="mb-3">
               <label htmlFor="cnpj" className="form-label">
-                Login (CNPJ)
+                CNPJ
               </label>
               <CNPJ
                 id="cnpj"
@@ -76,18 +77,12 @@ const Login = () => {
               />
             </div>
             <div className="mb-3">
-              <label htmlFor="password" className="form-label">
-                Senha
-              </label>
-              <input
-                type="password"
-                className="form-control"
-                id="password"
-                name="password"
+              <CampoSenha
+                label="Senha"
+                id="senha"
                 placeholder="Digite sua senha"
-                value={senha}
-                onChange={(e) => setSenha(e.target.value)}
-                required
+                valor={senha}
+                setValor={setSenha}
               />
             </div>
             {erro && (
@@ -96,6 +91,11 @@ const Login = () => {
             <button type="submit" className="btn btn-danger w-100">
               Login
             </button>
+            <div className="mt-3">
+              <Link to="/recuperar-senha" className="text-danger">
+                Esqueci minha senha
+              </Link>
+            </div>
           </form>
           <p className="mt-4 text-center">
             Não tem uma conta?{" "}

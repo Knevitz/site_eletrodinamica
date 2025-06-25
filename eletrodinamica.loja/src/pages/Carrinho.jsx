@@ -2,7 +2,7 @@ import React from "react";
 import { Container, Row, Col, Alert } from "react-bootstrap"; // Para os componentes de layout e alerta
 import BotaoComp from "../components/BotaoComp";
 import "./../App.css";
-
+import api from "../services/axios";
 const Carrinho = () => {
   return (
     <Container className="mt-5">
