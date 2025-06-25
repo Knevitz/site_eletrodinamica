@@ -11,6 +11,7 @@ const ProdutoDetalhe = () => {
   const [erro, setErro] = useState(null);
   const [carregando, setCarregando] = useState(true);
   const [codigoSelecionado, setCodigoSelecionado] = useState("");
+  const [adicionado, setAdicionado] = useState(false);
 
   const API_URL = process.env.REACT_APP_API_URL || "http://localhost:3000";
 
@@ -117,7 +118,7 @@ const ProdutoDetalhe = () => {
           )}
 
           <Button
-            variant="danger"
+            variant={adicionado ? "success" : "danger"}
             className="mt-2 w-100"
             onClick={() => {
               if (!codigoAtual) return;
@@ -127,11 +128,14 @@ const ProdutoDetalhe = () => {
                 imagem: produto.imagem,
                 codigo: codigoAtual,
               });
-              alert(`Produto adicionado ao carrinho!`);
+
+              // Mostrar feedback no botão
+              setAdicionado(true);
+              setTimeout(() => setAdicionado(false), 1500);
             }}
             disabled={!codigoAtual}
           >
-            Adicionar ao Carrinho
+            {adicionado ? "Adicionado ao Carrinho ✅" : "Adicionar ao Carrinho"}
           </Button>
 
           {produto.pdf && typeof produto.pdf === "string" && (
