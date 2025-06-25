@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import api from "../services/axios";
 
 const RecuperarSenha = () => {
   const [email, setEmail] = useState("");
@@ -11,26 +12,15 @@ const RecuperarSenha = () => {
     setErro("");
 
     try {
-      const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/auth/recuperar-senha`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email }),
-        }
-      );
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.mensagem || "Erro ao enviar e-mail");
-      }
+      const res = await api.post("/api/auth/recuperar-senha", { email });
 
       setMensagem(
         "Um e-mail foi enviado com instruções para redefinir sua senha. Verifique sua caixa de entrada e também a pasta de spam."
       );
     } catch (err) {
-      setErro(err.message);
+      const msg =
+        err?.response?.data?.mensagem || "Erro ao enviar e-mail de recuperação";
+      setErro(msg);
     }
   };
 

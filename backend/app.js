@@ -12,6 +12,7 @@ const produtoRoutes = require("./routes/produtos");
 const categoriaRoutes = require("./routes/categoria");
 const usuarioRoutes = require("./routes/usuarios");
 const authRoutes = require("./routes/auth");
+const cotacaoRoutes = require("./routes/cotacoes");
 
 const app = express();
 
@@ -79,6 +80,7 @@ app.use(
 );
 
 app.use("/api/usuarios", usuarioRoutes);
+app.use("/api/cotacoes", cotacaoRoutes);
 app.use("/api/produtos", produtoRoutes);
 app.use("/api/categorias", categoriaRoutes);
 app.use("/api/catalogo", catalogoRoutes);

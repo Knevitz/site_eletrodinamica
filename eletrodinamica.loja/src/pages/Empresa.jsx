@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Container, Form, Button, Alert } from "react-bootstrap";
+import api from "../services/axios";
 
 const Empresa = () => {
   const [email, setEmail] = useState("");
@@ -10,18 +11,8 @@ const Empresa = () => {
   useEffect(() => {
     const carregar = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const res = await fetch(
-          `${process.env.REACT_APP_API_URL}/api/config/empresa`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        if (!res.ok) throw new Error("Erro ao buscar informações");
-        const data = await res.json();
-        setEmail(data.email || "");
+        const res = await api.get("/api/config/empresa");
+        setEmail(res.data.email || "");
       } catch {
         setErro("Não foi possível carregar os dados da empresa.");
       } finally {
@@ -40,19 +31,7 @@ const Empresa = () => {
     }
 
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/config/empresa`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ email }),
-        }
-      );
-      if (!res.ok) throw new Error();
+      await api.put("/api/config/empresa", { email });
       setMensagem("Informações atualizadas com sucesso.");
     } catch {
       setErro("Erro ao atualizar as informações.");

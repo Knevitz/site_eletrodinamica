@@ -63,7 +63,15 @@
   border-radius: 10px !important;
   padding: 10px 15px !important;
 }
+.btn-outline-danger {
+  color: #d40000 !important; /* texto */
+  border-color: #d40000 !important; /* borda */
+}
 
+.btn-outline-danger:hover {
+  background-color: #d40000 !important; /* fundo no hover */
+  color: white !important;
+}
 /* Estilo do botão danger, se usado em outro ponto */
 .btn-danger {
   background-color: #d40000 !important;
@@ -340,4 +348,39 @@ textarea.form-control {
   color: #d40000 !important; /* ícone vermelho no hover */
   outline: none !important;
   box-shadow: none !important;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  background-image: none !important; /* remove o SVG padrão do Bootstrap */
+  display: inline-block !important;
+  width: 2rem !important;
+  height: 2rem !important;
+  background-color: transparent !important;
+  mask-size: contain !important;
+  -webkit-mask-size: contain !important;
+  mask-repeat: no-repeat !important;
+  -webkit-mask-repeat: no-repeat !important;
+  mask-position: center !important;
+  -webkit-mask-position: center !important;
+}
+
+.carousel-control-prev-icon {
+  mask-image: url("data:image/svg+xml;utf8,<svg fill='black' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M11.354 1.646a.5.5 0 0 0-.708 0L4.793 7.5l5.853 5.854a.5.5 0 0 0 .708-.708L6.207 7.5l5.147-5.146a.5.5 0 0 0 0-.708z'/></svg>") !important;
+  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg fill='black' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M11.354 1.646a.5.5 0 0 0-.708 0L4.793 7.5l5.853 5.854a.5.5 0 0 0 .708-.708L6.207 7.5l5.147-5.146a.5.5 0 0 0 0-.708z'/></svg>") !important;
+}
+
+.carousel-control-next-icon {
+  mask-image: url("data:image/svg+xml;utf8,<svg fill='black' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M4.646 1.646a.5.5 0 0 1 .708 0L11.207 7.5 5.354 13.354a.5.5 0 0 1-.708-.708L9.793 7.5 4.646 2.354a.5.5 0 0 1 0-.708z'/></svg>") !important;
+  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg fill='black' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M4.646 1.646a.5.5 0 0 1 .708 0L11.207 7.5 5.354 13.354a.5.5 0 0 1-.708-.708L9.793 7.5 4.646 2.354a.5.5 0 0 1 0-.708z'/></svg>") !important;
+}
+
+.carousel.bg-dark .carousel-control-prev-icon,
+.carousel.bg-dark .carousel-control-next-icon {
+  background-color: white !important; /* ícones brancos sobre fundo escuro */
+}
+
+.carousel.bg-light .carousel-control-prev-icon,
+.carousel.bg-light .carousel-control-next-icon {
+  background-color: black !important; /* ícones pretos sobre fundo claro */
 }

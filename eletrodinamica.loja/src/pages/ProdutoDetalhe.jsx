@@ -1,15 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import {
-  Container,
-  Spinner,
-  Alert,
-  Image,
-  Row,
-  Col,
-  Form,
-  Button,
-} from "react-bootstrap";
+import { Container, Spinner, Alert, Row, Col, Button } from "react-bootstrap";
+import api from "../services/axios";
+import SeletorDeCodigo from "../components/SeletorDeCodigo";
 
 const ProdutoDetalhe = () => {
   const { slug } = useParams();
@@ -18,98 +11,128 @@ const ProdutoDetalhe = () => {
   const [carregando, setCarregando] = useState(true);
   const [codigoSelecionado, setCodigoSelecionado] = useState("");
 
+  const API_URL = process.env.REACT_APP_API_URL || "http://localhost:3000";
+
   useEffect(() => {
     const buscarProduto = async () => {
       try {
-        const res = await fetch(
-          `${process.env.REACT_APP_API_URL}/api/produtos/slug/${slug}`
-        );
-        if (!res.ok) throw new Error("Erro ao buscar produto");
-        const data = await res.json();
-        setProduto(data);
+        const res = await api.get(`/api/produtos/slug/${slug}`);
+        if (!res.data || typeof res.data !== "object") {
+          throw new Error("Produto não encontrado.");
+        }
+        setProduto(res.data);
       } catch (err) {
-        setErro("Erro ao carregar produto.");
+        console.error("Erro ao buscar produto:", err);
+        setErro("Erro ao carregar produto. Tente novamente.");
       } finally {
         setCarregando(false);
       }
     };
 
-    buscarProduto();
+    if (slug) {
+      buscarProduto();
+    } else {
+      setErro("Produto inválido.");
+      setCarregando(false);
+    }
   }, [slug]);
 
-  const handleAdicionarAoCarrinho = () => {
-    // Aqui você pode integrar com Zustand ou outro contexto
-    alert(
-      "Produto adicionado ao carrinho: " +
-        (codigoSelecionado || produto.codigoPadrao)
-    );
-  };
+  const temCodigosPorOpcao =
+    produto &&
+    Array.isArray(produto.codigosPorOpcao) &&
+    produto.codigosPorOpcao.length > 0;
 
-  if (carregando) return <Spinner animation="border" className="mt-5" />;
-  if (erro)
+  const codigoAtual = temCodigosPorOpcao
+    ? codigoSelecionado
+    : produto?.codigoPadrao || "";
+
+  if (carregando) {
     return (
-      <Alert variant="danger" className="mt-5">
-        {erro}
-      </Alert>
+      <Container className="text-center mt-5">
+        <Spinner animation="border" />
+      </Container>
     );
-  if (!produto)
+  }
+
+  if (erro) {
     return (
-      <Alert variant="warning" className="mt-5">
-        Produto não encontrado.
-      </Alert>
+      <Container className="mt-5">
+        <Alert variant="danger">{erro}</Alert>
+      </Container>
     );
+  }
+
+  if (!produto) {
+    return (
+      <Container className="mt-5">
+        <Alert variant="warning">Produto não encontrado.</Alert>
+      </Container>
+    );
+  }
 
   return (
     <Container className="mt-4 mb-4">
       <Row>
-        <Col md={6} className="text-center">
-          <img
-            src={`${process.env.REACT_APP_API_URL}/uploads/${produto.imagem}`}
-            alt={produto.nome}
-            style={{
-              maxWidth: "100%",
-              height: "auto",
-              maxHeight: "400px",
-              objectFit: "contain",
-            }}
-          />
+        <Col md={6} className="text-center mb-4 mb-md-0">
+          {produto.imagem ? (
+            <img
+              src={`${API_URL}/uploads/${produto.imagem}`}
+              alt={produto.nome || "Imagem do produto"}
+              style={{
+                maxWidth: "100%",
+                height: "auto",
+                maxHeight: "400px",
+                objectFit: "contain",
+                borderRadius: "8px",
+              }}
+            />
+          ) : (
+            <p className="text-muted">Imagem não disponível</p>
+          )}
         </Col>
-        <Col md={6}>
-          <h2>{produto.nome}</h2>
-          <p>{produto.descricao}</p>
 
-          {produto.codigosPorOpcao?.length > 0 && (
-            <Form.Group>
-              <Form.Label>Escolha uma opção:</Form.Label>
-              <Form.Select
-                value={codigoSelecionado}
-                onChange={(e) => setCodigoSelecionado(e.target.value)}
-              >
-                <option value="">Selecione</option>
-                {produto.codigosPorOpcao.map((item, i) => (
-                  <option key={i} value={item.codigo}>
-                    {Object.values(item.opcoes).join(" / ")} – {item.codigo}
-                  </option>
-                ))}
-              </Form.Select>
-            </Form.Group>
+        <Col md={6}>
+          <h2>{produto.nome || "Nome indisponível"}</h2>
+          <p>{produto.descricao || "Descrição indisponível."}</p>
+
+          {temCodigosPorOpcao ? (
+            <>
+              <SeletorDeCodigo
+                opcoesSelect={produto.opcoesSelect}
+                codigosPorOpcao={produto.codigosPorOpcao}
+                onCodigoSelecionado={setCodigoSelecionado}
+              />
+
+              {codigoSelecionado && (
+                <p className="mt-2">
+                  Código selecionado: <strong>{codigoSelecionado}</strong>
+                </p>
+              )}
+            </>
+          ) : (
+            <p>
+              Código: <strong>{produto.codigoPadrao || "Indisponível"}</strong>
+            </p>
           )}
 
           <Button
             variant="danger"
-            className="mt-3"
-            onClick={handleAdicionarAoCarrinho}
+            className="mt-2 w-100"
+            onClick={() =>
+              alert(`Código a ser adicionado ao carrinho: ${codigoAtual}`)
+            }
+            disabled={!codigoAtual}
           >
             Adicionar ao Carrinho
           </Button>
 
-          {produto.pdf && (
-            <div className="mt-3">
+          {produto.pdf && typeof produto.pdf === "string" && (
+            <div className="mt-4">
               <a
-                href={`${process.env.REACT_APP_API_URL}/uploads/${produto.pdf}`}
+                href={`${API_URL}/uploads/${produto.pdf}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn btn-outline-secondary"
+                className="btn btn-outline-secondary w-100"
               >
                 Baixar manual (PDF)
               </a>

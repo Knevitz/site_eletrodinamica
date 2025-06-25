@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CampoSenha from "../components/CampoSenha";
+import api from "../services/axios";
 
 const RedefinirSenha = () => {
   const [novaSenha, setNovaSenha] = useState("");
@@ -22,20 +23,10 @@ const RedefinirSenha = () => {
     }
 
     try {
-      const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/auth/redefinir-senha`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token, novaSenha }),
-        }
-      );
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.mensagem || "Erro ao redefinir senha.");
-      }
+      const res = await api.post("/api/auth/redefinir-senha", {
+        token,
+        novaSenha,
+      });
 
       setMensagem(
         "Senha redefinida com sucesso! Você será redirecionado para a página de login."
@@ -45,7 +36,8 @@ const RedefinirSenha = () => {
         navigate("/login");
       }, 3000);
     } catch (err) {
-      setErro(err.message);
+      const msg = err?.response?.data?.mensagem || "Erro ao redefinir senha.";
+      setErro(msg);
     }
   };
 

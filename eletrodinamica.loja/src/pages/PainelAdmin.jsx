@@ -17,8 +17,8 @@ import {
   FaEnvelope,
   FaBuilding,
 } from "react-icons/fa";
+import api from "../services/axios";
 
-// Componente para renderizar um Card reutilizável
 const AdminCard = ({ icon: Icon, title, description, variant, onClick }) => (
   <Card className="shadow-sm h-100">
     <Card.Body className="d-flex flex-column">
@@ -38,62 +38,41 @@ const AdminCard = ({ icon: Icon, title, description, variant, onClick }) => (
 
 const PainelAdmin = () => {
   const navigate = useNavigate();
-
-  // Estados para email das cotações e feedback
   const [emailCotacoes, setEmailCotacoes] = useState("");
   const [loading, setLoading] = useState(true);
   const [mensagem, setMensagem] = useState(null);
   const [erro, setErro] = useState(null);
 
-  // Função para carregar email de cotação do backend
   const carregarEmail = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/config/email-cotacao`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      if (!res.ok) throw new Error("Erro ao carregar email");
-      const data = await res.json();
-      setEmailCotacoes(data.email || "");
-    } catch {
+      const res = await api.get("/api/config/email-cotacao");
+      setEmailCotacoes(res.data.email || "");
+    } catch (err) {
+      console.error(err);
       setErro("Não foi possível carregar o e-mail de cotações.");
     } finally {
       setLoading(false);
     }
   };
 
-  // Carrega email ao montar o componente
   useEffect(() => {
     carregarEmail();
   }, []);
 
-  // Salva email atualizado no backend
   const salvarEmail = async () => {
     setErro(null);
     setMensagem(null);
-    if (!emailCotacoes || !/\S+@\S+\.\S+/.test(emailCotacoes)) {
+
+    if (!/\S+@\S+\.\S+/.test(emailCotacoes)) {
       setErro("Por favor, insira um e-mail válido.");
       return;
     }
+
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/config/email-cotacao`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ email: emailCotacoes }),
-        }
-      );
-      if (!res.ok) throw new Error("Erro ao atualizar e-mail");
+      await api.put("/api/config/email-cotacao", { email: emailCotacoes });
       setMensagem("E-mail atualizado com sucesso.");
-    } catch {
+    } catch (err) {
+      console.error(err);
       setErro("Erro ao atualizar o e-mail. Tente novamente.");
     }
   };
@@ -104,7 +83,6 @@ const PainelAdmin = () => {
         Painel Administrativo
       </h2>
       <Row className="g-4">
-        {/* Cards principais */}
         <Col md={4}>
           <AdminCard
             icon={FaBoxOpen}
@@ -114,7 +92,6 @@ const PainelAdmin = () => {
             onClick={() => navigate("/admin/produtos")}
           />
         </Col>
-
         <Col md={4}>
           <AdminCard
             icon={FaTags}
@@ -124,7 +101,6 @@ const PainelAdmin = () => {
             onClick={() => navigate("/admin/categorias")}
           />
         </Col>
-
         <Col md={4}>
           <AdminCard
             icon={FaUsers}
@@ -134,7 +110,6 @@ const PainelAdmin = () => {
             onClick={() => navigate("/admin/clientes")}
           />
         </Col>
-
         <Col md={4}>
           <AdminCard
             icon={FaBuilding}
@@ -144,7 +119,6 @@ const PainelAdmin = () => {
             onClick={() => navigate("/admin/empresa")}
           />
         </Col>
-
         <Col md={4}>
           <AdminCard
             icon={FaBookOpen}
@@ -155,7 +129,7 @@ const PainelAdmin = () => {
           />
         </Col>
 
-        {/* Card para email de cotações */}
+        {/* E-mail de cotações */}
         <Col md={4}>
           <Card className="shadow-sm h-100">
             <Card.Body>

@@ -32,6 +32,11 @@ const Produto = sequelize.define("Produto", {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  opcoesSelect: {
+    type: DataTypes.JSON,
+    allowNull: true,
+  },
+
   categoriaId: {
     type: DataTypes.INTEGER,
     allowNull: false,

@@ -33,11 +33,9 @@ const parseProdutoJSONFields = (produto) => {
     produto.opcoesSelect = tentarParseJSON(produto.opcoesSelect) || {};
   else produto.opcoesSelect = {};
 
-  if (produto.codigosPorOpcao)
-    produto.codigosPorOpcao = tentarParseJSON(produto.codigosPorOpcao) || [];
-  else produto.codigosPorOpcao = [];
+  // Aqui, remova o parse em codigosPorOpcao pois é array de objetos vindo da associação
+  if (!produto.codigosPorOpcao) produto.codigosPorOpcao = [];
 
-  // Se CodigosPorOpcao vem como associação (array), não precisa parsear, mantemos
   return produto;
 };
 
@@ -47,7 +45,7 @@ exports.buscarProdutoPorSlug = async (req, res) => {
   try {
     const produto = await Produto.findOne({
       where: { slug, ativo: true },
-      include: [CodigosPorOpcao],
+      include: [{ model: CodigosPorOpcao, as: "codigosPorOpcao" }],
     });
 
     if (!produto) {
@@ -80,7 +78,7 @@ exports.listarProdutosPorCategoria = async (req, res) => {
         categoriaId: categoria.id,
         ativo: true,
       },
-      include: [CodigosPorOpcao],
+      include: [{ model: CodigosPorOpcao, as: "codigosPorOpcao" }],
       order: [["nome", "ASC"]],
     });
 
@@ -142,7 +140,7 @@ exports.criarProduto = async (req, res) => {
     }
 
     const produtoCompleto = await Produto.findByPk(novoProduto.id, {
-      include: [CodigosPorOpcao],
+      include: [{ model: CodigosPorOpcao, as: "codigosPorOpcao" }],
     });
 
     parseProdutoJSONFields(produtoCompleto);
@@ -175,10 +173,7 @@ exports.atualizarProduto = async (req, res) => {
     req.body.codigosPorOpcao === undefined
   ) {
     // nenhuma validação extra necessária
-  } else if (
-    !req.body.codigoPadrao &&
-    (!req.body.codigosPorOpcao || req.body.codigosPorOpcao.length === 0)
-  ) {
+  } else if (!codigoPadrao && (!novosCodigos || novosCodigos.length === 0)) {
     return res.status(400).json({
       erro: "É obrigatório ter 'codigoPadrao' quando 'codigosPorOpcao' estiver vazio.",
     });
@@ -191,16 +186,20 @@ exports.atualizarProduto = async (req, res) => {
     }
 
     if (req.files?.imagem?.[0]) {
-      deletarArquivoSeExistir(
-        path.join(__dirname, "..", "uploads", produto.imagem)
-      );
+      if (produto.imagem) {
+        deletarArquivoSeExistir(
+          path.join(__dirname, "..", "uploads", produto.imagem)
+        );
+      }
       produto.imagem = req.files.imagem[0].filename;
     }
 
     if (req.files?.pdf?.[0]) {
-      deletarArquivoSeExistir(
-        path.join(__dirname, "..", "uploads", produto.pdf)
-      );
+      if (produto.pdf) {
+        deletarArquivoSeExistir(
+          path.join(__dirname, "..", "uploads", produto.pdf)
+        );
+      }
       produto.pdf = req.files.pdf[0].filename;
     }
 
@@ -228,7 +227,7 @@ exports.atualizarProduto = async (req, res) => {
     }
 
     const produtoAtualizado = await Produto.findByPk(produto.id, {
-      include: [CodigosPorOpcao],
+      include: [{ model: CodigosPorOpcao, as: "codigosPorOpcao" }],
     });
 
     parseProdutoJSONFields(produtoAtualizado);
@@ -279,7 +278,7 @@ exports.listarProdutosAtivos = async (req, res) => {
   try {
     const produtos = await Produto.findAll({
       where: { ativo: true },
-      include: [CodigosPorOpcao],
+      include: [{ model: CodigosPorOpcao, as: "codigosPorOpcao" }],
     });
 
     produtos.forEach(parseProdutoJSONFields);
@@ -297,7 +296,7 @@ exports.buscarProdutoPorId = async (req, res) => {
 
   try {
     const produto = await Produto.findByPk(id, {
-      include: [CodigosPorOpcao],
+      include: [{ model: CodigosPorOpcao, as: "codigosPorOpcao" }],
     });
 
     if (!produto) {
@@ -317,7 +316,7 @@ exports.buscarProdutoPorId = async (req, res) => {
 exports.listarTodosProdutos = async (req, res) => {
   try {
     const produtos = await Produto.findAll({
-      include: [CodigosPorOpcao],
+      include: [{ model: CodigosPorOpcao, as: "codigosPorOpcao" }],
       order: [["createdAt", "DESC"]],
     });
 

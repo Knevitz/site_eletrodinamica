@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Container, Table, Button, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import api from "../services/axios";
 
 const CategoriasAdmin = () => {
   const navigate = useNavigate();
@@ -8,19 +9,10 @@ const CategoriasAdmin = () => {
   const [erro, setErro] = useState(null);
   const [mensagem, setMensagem] = useState(null);
 
-  // Carregar categorias da API
   const carregarCategorias = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/categorias`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      if (!res.ok) throw new Error("Erro ao carregar categorias");
-      const data = await res.json();
-      setCategorias(data);
+      const res = await api.get("/api/categorias");
+      setCategorias(res.data);
       setErro(null);
     } catch (error) {
       setErro("Erro ao carregar categorias.");
@@ -31,22 +23,11 @@ const CategoriasAdmin = () => {
     carregarCategorias();
   }, []);
 
-  // Deletar categoria
   const handleDelete = async (id) => {
     if (!window.confirm("Confirma a exclusão desta categoria?")) return;
 
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/categorias/${id}`,
-
-        {
-          method: "DELETE",
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      if (!res.ok) throw new Error("Erro ao deletar categoria");
+      await api.delete(`/api/categorias/${id}`);
       setMensagem("Categoria deletada com sucesso.");
       carregarCategorias();
     } catch {
@@ -77,36 +58,37 @@ const CategoriasAdmin = () => {
           </tr>
         </thead>
         <tbody>
-          {categorias.length === 0 && (
+          {categorias.length === 0 ? (
             <tr>
               <td colSpan="3" className="text-center">
                 Nenhuma categoria cadastrada.
               </td>
             </tr>
+          ) : (
+            categorias.map(({ id, nome, slug }) => (
+              <tr key={id}>
+                <td>{nome}</td>
+                <td>{slug}</td>
+                <td>
+                  <Button
+                    variant="warning"
+                    size="sm"
+                    className="me-2"
+                    onClick={() => navigate(`/admin/categorias/${id}`)}
+                  >
+                    Editar
+                  </Button>
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    onClick={() => handleDelete(id)}
+                  >
+                    Excluir
+                  </Button>
+                </td>
+              </tr>
+            ))
           )}
-          {categorias.map(({ id, nome, slug }) => (
-            <tr key={id}>
-              <td>{nome}</td>
-              <td>{slug}</td>
-              <td>
-                <Button
-                  variant="warning"
-                  size="sm"
-                  className="me-2"
-                  onClick={() => navigate(`/admin/categorias/${id}`)}
-                >
-                  Editar
-                </Button>
-                <Button
-                  variant="danger"
-                  size="sm"
-                  onClick={() => handleDelete(id)}
-                >
-                  Excluir
-                </Button>
-              </td>
-            </tr>
-          ))}
         </tbody>
       </Table>
     </Container>

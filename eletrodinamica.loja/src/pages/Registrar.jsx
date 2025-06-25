@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import CNPJ from "../components/CNPJ";
 import registerImage from "../assets/foto-divulgacao.jpg";
 import CampoSenha from "../components/CampoSenha";
+import api from "../services/axios"; // import axios customizado
 
 const Registrar = () => {
   const [nome, setNome] = useState("");
@@ -31,22 +32,17 @@ const Registrar = () => {
     const cnpjLimpo = cnpj.replace(/\D/g, "");
 
     try {
-      const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/auth/registrar`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ nome, email, cnpj: cnpjLimpo, senha }),
-        }
-      );
-
-      const data = await res.json();
-
-      if (!res.ok) throw new Error(data.erro || "Erro ao registrar");
+      await api.post("/api/auth/registrar", {
+        nome,
+        email,
+        cnpj: cnpjLimpo,
+        senha,
+      });
 
       navigate("/login");
     } catch (err) {
-      setErro(err.message || "Erro inesperado");
+      const msg = err?.response?.data?.erro || "Erro inesperado";
+      setErro(msg);
     }
   };
 
@@ -111,7 +107,7 @@ const Registrar = () => {
                 placeholder="Digite sua senha"
                 valor={senha}
                 setValor={setSenha}
-              />{" "}
+              />
             </div>
 
             <div className="mb-3">

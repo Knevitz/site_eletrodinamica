@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Container, Button, Spinner, Alert } from "react-bootstrap";
 import ImagemComTexto from "../../components/ImagemComTexto";
 import ControlEletr from "../../assets/prodEletrod.jpg";
+import api from "../../services/axios";
 
 const Controladores = () => {
   const [produtos, setProdutos] = useState([]);
@@ -11,12 +12,8 @@ const Controladores = () => {
   useEffect(() => {
     const buscarProdutos = async () => {
       try {
-        const res = await fetch(
-          `${process.env.REACT_APP_API_URL}/api/produtos/ativos`
-        );
-        if (!res.ok) throw new Error("Erro ao buscar produtos");
-        const data = await res.json();
-        setProdutos(data || []);
+        const res = await api.get("/api/produtos/ativos");
+        setProdutos(res.data || []);
       } catch (err) {
         setErro("Erro ao carregar os produtos.");
       } finally {

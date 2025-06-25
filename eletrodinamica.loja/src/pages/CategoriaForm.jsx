@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Container, Form, Button, Alert, Spinner } from "react-bootstrap";
+import api from "../services/axios";
 
 const CategoriaForm = ({ modo }) => {
   const navigate = useNavigate();
@@ -11,35 +12,21 @@ const CategoriaForm = ({ modo }) => {
   const [mensagem, setMensagem] = useState(null);
   const [carregando, setCarregando] = useState(modo === "editar");
 
-  const token = localStorage.getItem("token");
-
-  // Carregar dados da categoria se for modo de edição
   useEffect(() => {
     const fetchCategoria = async () => {
       try {
-        const res = await fetch(
-          `${process.env.REACT_APP_API_URL}/api/categorias/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        if (!res.ok) throw new Error("Erro ao carregar categoria");
-
-        const data = await res.json();
-        setNome(data.nome || "");
-        setCarregando(false);
+        const res = await api.get(`/api/categorias/${id}`);
+        setNome(res.data.nome || "");
       } catch (err) {
         setErro("Erro ao carregar dados da categoria.");
+      } finally {
         setCarregando(false);
       }
     };
 
     if (modo === "editar") fetchCategoria();
-  }, [id, modo, token]);
+  }, [id, modo]);
 
-  // Submissão do formulário
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErro(null);
@@ -51,23 +38,11 @@ const CategoriaForm = ({ modo }) => {
     }
 
     try {
-      const endpoint =
-        modo === "editar"
-          ? `${process.env.REACT_APP_API_URL}/api/categorias/${id}`
-          : `${process.env.REACT_APP_API_URL}/api/categorias`;
-
-      const metodo = modo === "editar" ? "PUT" : "POST";
-
-      const res = await fetch(endpoint, {
-        method: metodo,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ nome }),
-      });
-
-      if (!res.ok) throw new Error("Erro ao salvar categoria");
+      if (modo === "editar") {
+        await api.put(`/api/categorias/${id}`, { nome });
+      } else {
+        await api.post(`/api/categorias`, { nome });
+      }
 
       setMensagem("Categoria salva com sucesso.");
       setTimeout(() => navigate("/admin/categorias"), 1500);

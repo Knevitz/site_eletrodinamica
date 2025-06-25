@@ -16,7 +16,7 @@ const autenticarToken = (req, res, next) => {
         err.name === "TokenExpiredError"
           ? "Token expirado."
           : "Token inválido.";
-      return res.status(403).json({ erro: mensagem });
+      return res.status(401).json({ erro: mensagem }); // <-- aqui trocado de 403 para 401
     }
 
     req.usuario = decoded;

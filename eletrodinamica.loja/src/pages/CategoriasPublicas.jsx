@@ -1,6 +1,6 @@
-// src/pages/CategoriasPublicas.jsx
 import React, { useEffect, useState } from "react";
 import { Container, Table, Alert, Spinner } from "react-bootstrap";
+import api from "../services/axios";
 
 const CategoriasPublicas = () => {
   const [categorias, setCategorias] = useState([]);
@@ -10,12 +10,8 @@ const CategoriasPublicas = () => {
   useEffect(() => {
     const carregarCategorias = async () => {
       try {
-        const res = await fetch(
-          `${process.env.REACT_APP_API_URL}/api/categorias`
-        );
-        if (!res.ok) throw new Error("Erro ao carregar categorias");
-        const data = await res.json();
-        setCategorias(data);
+        const res = await api.get("/api/categorias");
+        setCategorias(res.data);
         setErro(null);
       } catch (err) {
         setErro("Erro ao carregar categorias.");
@@ -27,12 +23,13 @@ const CategoriasPublicas = () => {
     carregarCategorias();
   }, []);
 
-  if (carregando)
+  if (carregando) {
     return (
       <Container className="mt-5 text-center">
         <Spinner animation="border" />
       </Container>
     );
+  }
 
   return (
     <Container className="mt-5">
