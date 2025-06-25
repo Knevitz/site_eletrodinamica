@@ -6,7 +6,12 @@ const { UniqueConstraintError } = require("sequelize");
 
 const gerarToken = (usuario) => {
   return jwt.sign(
-    { id: usuario.id, tipo: usuario.tipo, nome: usuario.nome },
+    {
+      id: usuario.id,
+      tipo: usuario.tipo,
+      nome: usuario.nome,
+      email: usuario.email,
+    },
     process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_EXPIRES_IN }
   );

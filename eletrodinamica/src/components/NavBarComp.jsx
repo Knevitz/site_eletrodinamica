@@ -19,7 +19,6 @@ const NavBarComp = () => {
     location.pathname.startsWith("/paineis") ||
     location.pathname.startsWith("/controladores") ||
     location.pathname.startsWith("/venda") ||
-    location.pathname.startsWith("/rebobinagem") ||
     location.pathname.startsWith("/estufas");
 
   return (
@@ -70,15 +69,7 @@ const NavBarComp = () => {
                 >
                   Venda de equipamentos elétricos industriais
                 </NavDropdown.Item>
-                <NavDropdown.Item
-                  as={NavLink}
-                  to="/rebobinagem"
-                  className={
-                    location.pathname === "/rebobinagem" ? "active" : ""
-                  }
-                >
-                  Rebobinagem e consertos de motores
-                </NavDropdown.Item>
+
                 <NavDropdown.Item
                   as={NavLink}
                   to="/estufas"

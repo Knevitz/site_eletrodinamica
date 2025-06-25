@@ -11,7 +11,8 @@ import {
   Dropdown,
 } from "react-bootstrap";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode"; // corrigido import
+import { jwtDecode } from "jwt-decode";
+import useCarrinhoStore from "../store/carrinhoStore";
 
 import { FaUserCircle, FaShoppingCart } from "react-icons/fa";
 import "../App.css";
@@ -20,12 +21,13 @@ import logo from "../assets/eletrodinamica.png";
 const NavBarComp = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { itens } = useCarrinhoStore();
+  const cartItemCount = itens.length;
 
   const [categorias, setCategorias] = useState([]);
   const [token, setToken] = useState(localStorage.getItem("token") || null);
   const [nomeUsuario, setNomeUsuario] = useState(null);
 
-  // Decodificar token para pegar nome do usuário
   useEffect(() => {
     if (token) {
       try {
@@ -40,7 +42,6 @@ const NavBarComp = () => {
     }
   }, [token]);
 
-  // Atualizar token se mudar em outra aba
   useEffect(() => {
     const onStorageChange = () => {
       setToken(localStorage.getItem("token"));
@@ -49,14 +50,12 @@ const NavBarComp = () => {
     return () => window.removeEventListener("storage", onStorageChange);
   }, []);
 
-  // Função logout
   const handleLogout = () => {
     localStorage.removeItem("token");
     setToken(null);
     navigate("/login");
   };
 
-  // Navegar para perfil dependendo do role
   const handlePerfilClick = () => {
     if (!token) return navigate("/login");
 
@@ -76,7 +75,6 @@ const NavBarComp = () => {
     }
   };
 
-  // Buscar categorias da API
   useEffect(() => {
     const fetchCategorias = async () => {
       try {
@@ -94,18 +92,13 @@ const NavBarComp = () => {
     fetchCategorias();
   }, []);
 
-  // Evita mostrar navbar na página de login (ajuste se precisar em outras páginas)
   if (location.pathname === "/login") return null;
 
-  // Verifica se a rota ativa corresponde a alguma categoria para marcar active no dropdown
   const isProductsActive = categorias.some(
     (cat) =>
       location.pathname === `/categoria/${cat.slug}` ||
       location.pathname.startsWith(`/categoria/${cat.slug}/`)
   );
-
-  // Contagem de itens do carrinho (substituir com estado real depois)
-  const cartItemCount = 3;
 
   return (
     <Navbar expand="lg" bg="dark" variant="dark" className="custom-navbar">

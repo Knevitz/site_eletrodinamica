@@ -8,5 +8,6 @@ router.post("/", autenticarToken, cotacaoController.enviarCotacao);
 
 // Cliente vê suas próprias cotações
 router.get("/minhas", autenticarToken, cotacaoController.getMinhasCotacoes);
+// backend/routes/cotacoes.js
 
 module.exports = router;

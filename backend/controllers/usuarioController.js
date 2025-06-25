@@ -1,4 +1,4 @@
-const Usuario = require("../models/Usuario");
+const { Usuario } = require("../models");
 
 // CLIENTE
 exports.obterProprioPerfil = async (req, res) => {
@@ -6,10 +6,8 @@ exports.obterProprioPerfil = async (req, res) => {
     const usuario = await Usuario.findByPk(req.usuario.id, {
       attributes: ["id", "nome", "email", "cnpj", "tipo"],
     });
-
     if (!usuario)
       return res.status(404).json({ erro: "Usuário não encontrado." });
-
     res.json(usuario);
   } catch (erro) {
     res.status(500).json({ erro: "Erro ao buscar perfil." });
@@ -20,12 +18,12 @@ exports.atualizarProprioPerfil = async (req, res) => {
   try {
     const { nome, email } = req.body;
     const usuario = await Usuario.findByPk(req.usuario.id);
-
     if (!usuario)
       return res.status(404).json({ erro: "Usuário não encontrado." });
 
-    usuario.nome = nome || usuario.nome;
-    usuario.email = email || usuario.email;
+    usuario.nome = nome ?? usuario.nome;
+    usuario.email = email ?? usuario.email;
+
     await usuario.save();
 
     res.json({ mensagem: "Perfil atualizado.", usuario });
@@ -70,10 +68,8 @@ exports.verUsuario = async (req, res) => {
     const usuario = await Usuario.findByPk(req.params.id, {
       attributes: ["id", "nome", "email", "cnpj", "tipo"],
     });
-
     if (!usuario)
       return res.status(404).json({ erro: "Usuário não encontrado." });
-
     res.json(usuario);
   } catch (erro) {
     res.status(500).json({ erro: "Erro ao buscar usuário." });
@@ -84,13 +80,14 @@ exports.editarUsuario = async (req, res) => {
   try {
     const { nome, email, tipo } = req.body;
     const usuario = await Usuario.findByPk(req.params.id);
-
     if (!usuario)
       return res.status(404).json({ erro: "Usuário não encontrado." });
 
-    usuario.nome = nome || usuario.nome;
-    usuario.email = email || usuario.email;
-    usuario.tipo = tipo || usuario.tipo;
+    console.log("Atualizando email do usuário:", usuario.id, "para:", email);
+
+    usuario.nome = nome ?? usuario.nome;
+    usuario.email = email ?? usuario.email;
+    usuario.tipo = tipo ?? usuario.tipo;
 
     await usuario.save();
 
@@ -103,7 +100,6 @@ exports.editarUsuario = async (req, res) => {
 exports.adminExcluirUsuario = async (req, res) => {
   try {
     const usuario = await Usuario.findByPk(req.params.id);
-
     if (!usuario)
       return res.status(404).json({ erro: "Usuário não encontrado." });
 

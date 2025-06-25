@@ -16,10 +16,10 @@ const autenticarToken = (req, res, next) => {
         err.name === "TokenExpiredError"
           ? "Token expirado."
           : "Token inválido.";
-      return res.status(401).json({ erro: mensagem }); // <-- aqui trocado de 403 para 401
+      return res.status(401).json({ erro: mensagem });
     }
 
-    req.usuario = decoded;
+    req.usuario = decoded; // decoded deve conter id e tipo do usuário
     next();
   });
 };

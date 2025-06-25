@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { Container, Spinner, Alert, Row, Col, Button } from "react-bootstrap";
 import api from "../services/axios";
 import SeletorDeCodigo from "../components/SeletorDeCodigo";
+import useCarrinhoStore from "../store/carrinhoStore";
 
 const ProdutoDetalhe = () => {
   const { slug } = useParams();
@@ -118,9 +119,16 @@ const ProdutoDetalhe = () => {
           <Button
             variant="danger"
             className="mt-2 w-100"
-            onClick={() =>
-              alert(`Código a ser adicionado ao carrinho: ${codigoAtual}`)
-            }
+            onClick={() => {
+              if (!codigoAtual) return;
+              useCarrinhoStore.getState().adicionar({
+                nome: produto.nome,
+                slug: produto.slug,
+                imagem: produto.imagem,
+                codigo: codigoAtual,
+              });
+              alert(`Produto adicionado ao carrinho!`);
+            }}
             disabled={!codigoAtual}
           >
             Adicionar ao Carrinho

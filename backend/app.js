@@ -79,6 +79,7 @@ app.use(
   })
 );
 
+// Rotas da API
 app.use("/api/usuarios", usuarioRoutes);
 app.use("/api/cotacoes", cotacaoRoutes);
 app.use("/api/produtos", produtoRoutes);

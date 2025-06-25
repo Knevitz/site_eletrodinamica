@@ -7,35 +7,36 @@ import {
   useLocation,
 } from "react-router-dom";
 import { Container } from "react-bootstrap";
+
 import ScrollToTop from "./components/ScrollTop";
 import NavBarComp from "./components/NavBarComp";
 import FooterComp from "./components/FooterComp";
+import PrivateRoute from "./components/PrivateRoute";
 
 // Páginas públicas
-import ProdutoDetalhe from "./pages/ProdutoDetalhe";
 import Home from "./pages/Home";
 import Carrinho from "./pages/Carrinho";
 import Login from "./pages/login";
+import Registrar from "./pages/Registrar";
 import RecuperarSenha from "./pages/RecuperarSenha";
 import RedefinirSenha from "./pages/RedefinirSenha";
-import Registrar from "./pages/Registrar";
+import ProdutoDetalhe from "./pages/ProdutoDetalhe";
 import CategoriasPublicas from "./pages/CategoriasPublicas";
 import ProdutosPorCategoria from "./components/ProdutosPorCategoria";
 
 // Cliente
 import ContaCliente from "./pages/ContaCliente";
+import ConfirmarCotacao from "./pages/ConfirmarCotacao";
 
 // Admin
-import PrivateRoute from "./components/PrivateRoute";
 import PainelAdmin from "./pages/PainelAdmin";
 import ProdutosAdmin from "./components/ProdutosAdmin";
+import ProdutoForm from "./components/ProdutoForm";
 import ClientesAdmin from "./components/ClientesAdmin";
 import AtualizarCatalogo from "./components/AtualizarCatalogo";
 import CategoriasAdmin from "./pages/CategoriasAdmin";
 import CategoriaCriar from "./pages/CategoriaCriar";
 import CategoriaEditar from "./pages/CategoriaEditar";
-import ProdutoForm from "./components/ProdutoForm";
-import Empresa from "./pages/Empresa"; // ✅ nova página
 
 const AppContent = () => {
   const location = useLocation();
@@ -47,9 +48,11 @@ const AppContent = () => {
   return (
     <>
       {!isLoginPage && <NavBarComp />}
+
       <div className="app-content">
         <Container className={!isLoginPage ? "mt-5" : ""}>
           <ScrollToTop />
+
           <Routes>
             {/* Rotas públicas */}
             <Route path="/" element={<Home />} />
@@ -62,15 +65,16 @@ const AppContent = () => {
             <Route path="/categoria/:slug" element={<ProdutosPorCategoria />} />
             <Route path="/produto/:slug" element={<ProdutoDetalhe />} />
 
-            {/* Cliente logado */}
+            {/* Cliente (rota protegida) */}
             <Route
               path="/cliente"
               element={<PrivateRoute allowedRoles={["cliente"]} />}
             >
               <Route index element={<ContaCliente />} />
+              <Route path="confirmar-cotacao" element={<ConfirmarCotacao />} />
             </Route>
 
-            {/* Admin logado */}
+            {/* Admin (rota protegida) */}
             <Route
               path="/admin"
               element={<PrivateRoute allowedRoles={["admin"]} />}
@@ -94,13 +98,11 @@ const AppContent = () => {
               <Route path="clientes" element={<ClientesAdmin />} />
               {/* Catálogo */}
               <Route path="catalogo" element={<AtualizarCatalogo />} />
-              {/* Empresa */}
-              <Route path="empresa" element={<Empresa />} />{" "}
-              {/* ✅ nova rota */}
             </Route>
           </Routes>
         </Container>
       </div>
+
       {!isLoginPage && <FooterComp />}
     </>
   );
