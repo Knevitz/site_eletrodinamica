@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Container, Table, Form, Spinner, Alert } from "react-bootstrap";
+import { Container, Table, Spinner, Alert, Form } from "react-bootstrap";
+import CNPJ, { formatarCNPJ } from "../components/CNPJ";
 
 const ClientesAdmin = () => {
   const [clientes, setClientes] = useState([]);
@@ -42,7 +43,7 @@ const ClientesAdmin = () => {
   }, []);
 
   const clientesFiltrados = clientes.filter((cliente) =>
-    cliente.cnpj.toLowerCase().includes(filtro.toLowerCase())
+    cliente.cnpj.replace(/\D/g, "").includes(filtro.replace(/\D/g, ""))
   );
 
   return (
@@ -51,11 +52,10 @@ const ClientesAdmin = () => {
 
       <Form className="mb-4">
         <Form.Group>
-          <Form.Control
-            type="text"
-            placeholder="Buscar por CNPJ"
+          <CNPJ
+            className="form-control"
             value={filtro}
-            onChange={(e) => setFiltro(e.target.value)}
+            onChange={(val) => setFiltro(val)}
           />
         </Form.Group>
       </Form>
@@ -86,7 +86,7 @@ const ClientesAdmin = () => {
               clientesFiltrados.map((cliente) => (
                 <tr key={cliente.id}>
                   <td>{cliente.nome}</td>
-                  <td>{cliente.cnpj}</td>
+                  <td>{formatarCNPJ(cliente.cnpj)}</td>
                   <td>{cliente.email}</td>
                 </tr>
               ))
