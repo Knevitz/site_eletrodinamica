@@ -9,6 +9,9 @@ const ConfirmarCotacao = () => {
   const navigate = useNavigate();
 
   const token = localStorage.getItem("token");
+  const [mensagem, setMensagem] = React.useState(null);
+  const [erro, setErro] = React.useState(null);
+  const [enviado, setEnviado] = React.useState(false);
 
   if (!token) {
     alert("Você precisa estar logado para confirmar a cotação.");
@@ -41,6 +44,8 @@ const ConfirmarCotacao = () => {
   }
 
   const handleConfirmar = async () => {
+    setErro(null);
+    setMensagem(null);
     try {
       const response = await fetch(
         `${process.env.REACT_APP_API_URL}/api/cotacoes`,
@@ -59,12 +64,16 @@ const ConfirmarCotacao = () => {
         throw new Error(data.erro || "Erro ao enviar cotação.");
       }
 
-      alert("Cotação enviada com sucesso!");
+      setMensagem("Cotação enviada com sucesso!");
+      setEnviado(true);
       limpar();
-      navigate("/");
+
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
     } catch (error) {
       console.error("Erro ao confirmar cotação:", error);
-      alert("Erro: " + error.message);
+      setErro("Erro: " + error.message);
     }
   };
 
@@ -76,6 +85,9 @@ const ConfirmarCotacao = () => {
         variant="info"
         className="d-flex justify-content-between align-items-center"
       >
+        {mensagem && <Alert variant="success">{mensagem}</Alert>}
+        {erro && <Alert variant="danger">{erro}</Alert>}
+
         <div>
           <strong>Email para envio:</strong> {email}
         </div>
@@ -116,9 +128,11 @@ const ConfirmarCotacao = () => {
       </Table>
 
       <div className="text-end mt-4">
-        <Button variant="success" onClick={handleConfirmar}>
-          Confirmar Cotação
-        </Button>
+        {!enviado && (
+          <Button variant="success" onClick={handleConfirmar}>
+            Confirmar Cotação
+          </Button>
+        )}
       </div>
     </Container>
   );

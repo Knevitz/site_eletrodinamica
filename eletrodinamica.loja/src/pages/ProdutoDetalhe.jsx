@@ -135,7 +135,7 @@ const ProdutoDetalhe = () => {
             }}
             disabled={!codigoAtual}
           >
-            {adicionado ? "Adicionado ao Carrinho ✅" : "Adicionar ao Carrinho"}
+            {adicionado ? "✅" : "Adicionar ao Carrinho"}
           </Button>
 
           {produto.pdf && typeof produto.pdf === "string" && (
