@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { Container, Spinner, Alert, Row, Col, Button } from "react-bootstrap";
 import api from "../services/axios";
 import SeletorDeCodigo from "../components/SeletorDeCodigo";
+import useCarrinhoStore from "../store/carrinhoStore";
 
 const ProdutoDetalhe = () => {
   const { slug } = useParams();
@@ -10,6 +11,7 @@ const ProdutoDetalhe = () => {
   const [erro, setErro] = useState(null);
   const [carregando, setCarregando] = useState(true);
   const [codigoSelecionado, setCodigoSelecionado] = useState("");
+  const [adicionado, setAdicionado] = useState(false);
 
   const API_URL = process.env.REACT_APP_API_URL || "http://localhost:3000";
 
@@ -116,14 +118,24 @@ const ProdutoDetalhe = () => {
           )}
 
           <Button
-            variant="danger"
+            variant={adicionado ? "success" : "danger"}
             className="mt-2 w-100"
-            onClick={() =>
-              alert(`Código a ser adicionado ao carrinho: ${codigoAtual}`)
-            }
+            onClick={() => {
+              if (!codigoAtual) return;
+              useCarrinhoStore.getState().adicionar({
+                nome: produto.nome,
+                slug: produto.slug,
+                imagem: produto.imagem,
+                codigo: codigoAtual,
+              });
+
+              // Mostrar feedback no botão
+              setAdicionado(true);
+              setTimeout(() => setAdicionado(false), 1500);
+            }}
             disabled={!codigoAtual}
           >
-            Adicionar ao Carrinho
+            {adicionado ? "✅" : "Adicionar ao Carrinho"}
           </Button>
 
           {produto.pdf && typeof produto.pdf === "string" && (

@@ -81,19 +81,14 @@ const Home = () => {
     <Container className="mt-4">
       {/* CARROSSEL */}
       {produtos.length > 0 && (
-        <Carousel className="mb-5 bg-light">
+        <Carousel className="mb-5 carousel" indicators={false} controls={false}>
           {produtos.map((produto) => (
             <Carousel.Item key={produto.id}>
               <img
                 className="d-block w-100"
+                onClick={() => navigate(`/produto/${produto.slug}`)}
                 src={`${API_URL}/uploads/${produto.imagem}`}
                 alt={produto.nome}
-                style={{
-                  maxHeight: "400px",
-                  objectFit: "contain",
-                  backgroundColor: "white",
-                  width: "100%",
-                }}
               />
               <Carousel.Caption>
                 <h5 className="bg-dark bg-opacity-50 rounded p-2 d-inline-block">
@@ -113,17 +108,28 @@ const Home = () => {
             <Card
               className="h-100 cursor-pointer"
               onClick={() => navigate(`/produto/${produto.slug}`)}
-              style={{ cursor: "pointer" }}
+              style={{
+                cursor: "pointer",
+                height: "250px",
+                objectFit: "contain",
+                backgroundColor: "white",
+                padding: "10px",
+              }}
             >
               <Card.Img
                 variant="top"
                 src={`${API_URL}/uploads/${produto.imagem}`}
                 alt={produto.nome}
-                style={{ height: "250px", objectFit: "cover" }}
+                style={{
+                  height: "250px",
+                  objectFit: "contain",
+                  backgroundColor: "white",
+                  padding: "10px",
+                }}
               />
               <Card.Body>
                 <Card.Title>{produto.nome}</Card.Title>
-                <Card.Text className="text-muted">
+                <Card.Text className="text-muted text-center">
                   {produto.categoriaNome}
                 </Card.Text>
               </Card.Body>
@@ -133,25 +139,36 @@ const Home = () => {
       </Row>
 
       {/* SEÇÕES POR CATEGORIA */}
-      {produtosPorCategoriaMap.map(({ categoria, produtos }) => (
-        <section key={categoria.id} className="mb-5">
-          <h4 className="mb-3">{categoria.nome}</h4>
-          {produtos.length === 0 ? (
-            <Alert variant="warning">Nenhum produto nesta categoria.</Alert>
-          ) : (
+      {produtosPorCategoriaMap
+        .filter(({ produtos }) => produtos.length > 0)
+        .map(({ categoria, produtos }) => (
+          <section key={categoria.id} className="mb-5">
+            <h4 className="mb-3">{categoria.nome}</h4>
             <Row>
               {produtos.map((produto) => (
                 <Col key={produto.id} md={3} className="mb-3">
                   <Card
                     className="h-100"
                     onClick={() => navigate(`/produto/${produto.slug}`)}
-                    style={{ cursor: "pointer" }}
+                    style={{
+                      height: "250px",
+                      objectFit: "contain",
+                      backgroundColor: "white",
+                      cursor: "pointer",
+                      padding: "10px",
+                    }}
                   >
                     <Card.Img
                       variant="top"
                       src={`${API_URL}/uploads/${produto.imagem}`}
                       alt={produto.nome}
-                      style={{ height: "180px", objectFit: "cover" }}
+                      style={{
+                        height: "250px",
+                        cursor: "pointer",
+                        objectFit: "contain",
+                        backgroundColor: "white",
+                        padding: "10px",
+                      }}
                     />
                     <Card.Body>
                       <Card.Title style={{ fontSize: "1rem" }}>
@@ -162,9 +179,8 @@ const Home = () => {
                 </Col>
               ))}
             </Row>
-          )}
-        </section>
-      ))}
+          </section>
+        ))}
     </Container>
   );
 };

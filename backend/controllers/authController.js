@@ -1,38 +1,66 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const Usuario = require("../models/Usuario");
 const nodemailer = require("nodemailer");
+const validator = require("validator");
 const { UniqueConstraintError } = require("sequelize");
+
+const Usuario = require("../models/Usuario");
 
 const gerarToken = (usuario) => {
   return jwt.sign(
-    { id: usuario.id, tipo: usuario.tipo, nome: usuario.nome },
+    {
+      id: usuario.id,
+      tipo: usuario.tipo,
+      nome: usuario.nome,
+      email: usuario.email,
+    },
     process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_EXPIRES_IN }
   );
 };
 
 const registrar = async (req, res) => {
-  const { nome, cnpj, senha, email } = req.body;
+  let { nome, cnpj, senha, email } = req.body;
 
+  // Sanitização
+  nome = nome?.trim();
+  cnpj = cnpj?.replace(/\D/g, "");
+  email = email?.trim().toLowerCase();
+  senha = senha?.trim();
+
+  // Validações
   if (!nome || !cnpj || !senha || !email) {
-    console.log("Campos obrigatórios ausentes no registro");
     return res
       .status(400)
       .json({ erro: "Preencha todos os campos obrigatórios." });
   }
 
+  if (!validator.isEmail(email)) {
+    return res.status(400).json({ erro: "Email inválido." });
+  }
+
+  if (!validator.isLength(senha, { min: 6 })) {
+    return res
+      .status(400)
+      .json({ erro: "A senha deve ter ao menos 6 caracteres." });
+  }
+
+  if (
+    !validator.isLength(cnpj, { min: 14, max: 14 }) ||
+    !validator.isNumeric(cnpj)
+  ) {
+    return res.status(400).json({ erro: "CNPJ inválido." });
+  }
+
   try {
     let tipo;
 
-    const cnpjLimpo = cnpj.trim();
-    if (cnpjLimpo === process.env.ADMIN_CNPJ) {
+    if (cnpj === process.env.ADMIN_CNPJ) {
       const adminExistente = await Usuario.findOne({
-        where: { cnpj: cnpjLimpo, tipo: "admin" },
+        where: { cnpj, tipo: "admin" },
       });
 
       if (adminExistente) {
-        console.log("Admin já existe para este CNPJ:", cnpjLimpo);
         return res
           .status(400)
           .json({ erro: "Conta de administrador já existe." });
@@ -53,12 +81,6 @@ const registrar = async (req, res) => {
       tipo,
     });
 
-    console.log("Usuário registrado com sucesso:", {
-      id: novoUsuario.id,
-      nome: novoUsuario.nome,
-      tipo: novoUsuario.tipo,
-    });
-
     res.status(201).json({
       mensagem: "Usuário registrado com sucesso.",
       usuario: {
@@ -70,34 +92,39 @@ const registrar = async (req, res) => {
     });
   } catch (erro) {
     if (erro instanceof UniqueConstraintError) {
-      console.error("Erro de unicidade: CNPJ ou email já existe");
       return res.status(400).json({ erro: "CNPJ ou email já está em uso" });
     }
+
     console.error("Erro ao registrar usuário:", erro);
     res.status(500).json({ erro: "Erro ao registrar usuário." });
   }
 };
 
 const login = async (req, res) => {
-  const { cnpj, senha } = req.body;
+  let { cnpj, senha } = req.body;
+
+  // Sanitização
+  cnpj = cnpj?.replace(/\D/g, "");
+  senha = senha?.trim();
+
+  if (!cnpj || !senha) {
+    return res.status(400).json({ erro: "CNPJ e senha são obrigatórios." });
+  }
 
   try {
     const usuario = await Usuario.findOne({ where: { cnpj } });
 
     if (!usuario) {
-      console.log("Login falhou: CNPJ não encontrado:", cnpj);
       return res.status(401).json({ erro: "CNPJ não encontrado." });
     }
 
     const senhaValida = await bcrypt.compare(senha, usuario.senha);
 
     if (!senhaValida) {
-      console.log("Senha incorreta para CNPJ", cnpj);
       return res.status(401).json({ erro: "Senha incorreta." });
     }
 
     const token = gerarToken(usuario);
-    console.log("Login bem-sucedido:", usuario.nome);
 
     res.status(200).json({
       mensagem: "Login realizado com sucesso.",
@@ -115,12 +142,10 @@ const login = async (req, res) => {
 };
 
 const verificarToken = (req, res) => {
-  console.log("Token verificado com sucesso para o usuário", req.usuario?.id);
   res.status(200).json({ mensagem: "Token válido." });
 };
 
 const protegido = (req, res) => {
-  console.log("Acesso à rota protegida autorizado", req.usuario);
   res.status(200).json({
     mensagem: "Acesso autorizado à rota protegida.",
     usuario: req.usuario,
@@ -128,7 +153,11 @@ const protegido = (req, res) => {
 };
 
 const recuperarSenha = async (req, res) => {
-  const { email } = req.body;
+  const email = req.body.email?.trim().toLowerCase();
+
+  if (!validator.isEmail(email)) {
+    return res.status(400).json({ mensagem: "Email inválido." });
+  }
 
   try {
     const usuario = await Usuario.findOne({ where: { email } });
@@ -173,7 +202,8 @@ const recuperarSenha = async (req, res) => {
 };
 
 const redefinirSenha = async (req, res) => {
-  const { token, novaSenha } = req.body;
+  const { token } = req.body;
+  const novaSenha = req.body.novaSenha?.trim();
 
   if (!token || !novaSenha) {
     return res
@@ -181,21 +211,23 @@ const redefinirSenha = async (req, res) => {
       .json({ mensagem: "Token e nova senha são obrigatórios." });
   }
 
+  if (!validator.isLength(novaSenha, { min: 6 })) {
+    return res
+      .status(400)
+      .json({ mensagem: "A nova senha deve ter ao menos 6 caracteres." });
+  }
+
   try {
-    // Verifica e decodifica o token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const usuarioId = decoded.id;
 
-    // Verifica se o usuário ainda existe
     const usuario = await Usuario.findByPk(usuarioId);
     if (!usuario) {
       return res.status(404).json({ mensagem: "Usuário não encontrado." });
     }
 
-    // Criptografa a nova senha
     const senhaCriptografada = await bcrypt.hash(novaSenha, 10);
 
-    // Atualiza a senha no banco
     usuario.senha = senhaCriptografada;
     await usuario.save();
 
@@ -205,10 +237,12 @@ const redefinirSenha = async (req, res) => {
     return res.status(400).json({ mensagem: "Token inválido ou expirado." });
   }
 };
-// Exports organizados
-exports.registrar = registrar;
-exports.login = login;
-exports.verificarToken = verificarToken;
-exports.protegido = protegido;
-exports.recuperarSenha = recuperarSenha;
-exports.redefinirSenha = redefinirSenha;
+
+module.exports = {
+  registrar,
+  login,
+  verificarToken,
+  protegido,
+  recuperarSenha,
+  redefinirSenha,
+};

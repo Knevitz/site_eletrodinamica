@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Container, Table, Button, Spinner, Alert } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import {
+  Container,
+  Table,
+  Button,
+  Spinner,
+  Alert,
+  Card,
+  Form,
+} from "react-bootstrap";
 import { formatarCNPJ } from "../components/CNPJ";
 import api from "../services/axios";
 
@@ -9,7 +16,12 @@ const ContaCliente = () => {
   const [historico, setHistorico] = useState([]);
   const [erro, setErro] = useState(null);
   const [carregando, setCarregando] = useState(true);
-  const navigate = useNavigate();
+
+  // Estados para edição de email
+  const [emailEdit, setEmailEdit] = useState("");
+  const [mensagemSucesso, setMensagemSucesso] = useState(null);
+  const [erroEdicao, setErroEdicao] = useState(null);
+  const [editando, setEditando] = useState(false);
 
   useEffect(() => {
     const fetchDados = async () => {
@@ -21,6 +33,7 @@ const ContaCliente = () => {
 
         setCliente(resUsuario.data);
         setHistorico(resHistorico.data);
+        setEmailEdit(resUsuario.data.email || "");
       } catch (err) {
         console.error(err);
         setErro("Erro ao carregar dados do cliente.");
@@ -31,6 +44,28 @@ const ContaCliente = () => {
 
     fetchDados();
   }, []);
+
+  const salvarEmail = async () => {
+    setErroEdicao(null);
+    setMensagemSucesso(null);
+
+    if (!/\S+@\S+\.\S+/.test(emailEdit)) {
+      setErroEdicao("Por favor, insira um e-mail válido.");
+      return;
+    }
+
+    try {
+      setEditando(true);
+      await api.put("/api/usuarios/me", { email: emailEdit });
+      setMensagemSucesso("E-mail atualizado com sucesso.");
+      setCliente((old) => ({ ...old, email: emailEdit }));
+    } catch (err) {
+      console.error("Erro ao atualizar e-mail:", err);
+      setErroEdicao("Erro ao atualizar o e-mail.");
+    } finally {
+      setEditando(false);
+    }
+  };
 
   if (carregando) {
     return (
@@ -61,13 +96,37 @@ const ContaCliente = () => {
         <strong>Email:</strong> {cliente?.email}
       </p>
 
-      <Button
-        variant="outline-danger"
-        className="mb-4"
-        onClick={() => navigate("/cliente/editar")}
-      >
-        Editar Dados
-      </Button>
+      {/* Card para editar email */}
+      <Card className="mb-4 shadow-sm">
+        <Card.Body>
+          <Card.Title>Editar E-mail</Card.Title>
+          <Form.Control
+            type="email"
+            placeholder="Digite seu e-mail"
+            value={emailEdit}
+            onChange={(e) => setEmailEdit(e.target.value)}
+            disabled={editando}
+          />
+          {erroEdicao && (
+            <Alert variant="danger" className="mt-2">
+              {erroEdicao}
+            </Alert>
+          )}
+          {mensagemSucesso && (
+            <Alert variant="success" className="mt-2">
+              {mensagemSucesso}
+            </Alert>
+          )}
+          <Button
+            className="mt-3"
+            variant="danger"
+            onClick={salvarEmail}
+            disabled={editando}
+          >
+            {editando ? "Salvando..." : "Salvar E-mail"}
+          </Button>
+        </Card.Body>
+      </Card>
 
       <h4 className="mt-4">Histórico de Cotações</h4>
       {historico.length === 0 ? (
@@ -76,7 +135,7 @@ const ContaCliente = () => {
         <Table striped bordered hover>
           <thead>
             <tr>
-              <th>ID</th>
+              <th>Nº</th>
               <th>Data</th>
               <th>Itens</th>
               <th>Status</th>

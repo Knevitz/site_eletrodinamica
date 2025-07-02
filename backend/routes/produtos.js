@@ -9,6 +9,8 @@ const autenticarToken = authMiddleware.autenticarToken;
 const apenasAdmin = authMiddleware.apenasAdmin;
 
 // Rotas públicas
+router.get("/buscar", produtoController.buscarProdutosPorTextoOuCodigo);
+
 // Listar produtos ativos
 router.get("/ativos", produtoController.listarProdutosAtivos);
 

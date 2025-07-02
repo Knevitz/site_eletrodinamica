@@ -19,7 +19,6 @@ const NavBarComp = () => {
     location.pathname.startsWith("/paineis") ||
     location.pathname.startsWith("/controladores") ||
     location.pathname.startsWith("/venda") ||
-    location.pathname.startsWith("/rebobinagem") ||
     location.pathname.startsWith("/estufas");
 
   return (
@@ -70,15 +69,7 @@ const NavBarComp = () => {
                 >
                   Venda de equipamentos elétricos industriais
                 </NavDropdown.Item>
-                <NavDropdown.Item
-                  as={NavLink}
-                  to="/rebobinagem"
-                  className={
-                    location.pathname === "/rebobinagem" ? "active" : ""
-                  }
-                >
-                  Rebobinagem e consertos de motores
-                </NavDropdown.Item>
+
                 <NavDropdown.Item
                   as={NavLink}
                   to="/estufas"
@@ -88,14 +79,8 @@ const NavBarComp = () => {
                 </NavDropdown.Item>
               </NavDropdown>
 
-              <Nav.Link as={NavLink} to="/contato">
-                Contato
-              </Nav.Link>
-              <Nav.Link as={NavLink} to="/trabalhe">
-                Trabalhe conosco
-              </Nav.Link>
               <Nav.Link
-                href="http://localhost:3000/"
+                href={process.env.REACT_APP_LOJA_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 id="loja-link"
