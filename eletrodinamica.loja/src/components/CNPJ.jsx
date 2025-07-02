@@ -37,4 +37,14 @@ function CNPJ({ value: propValue, onChange, ...props }) {
   );
 }
 
+export const formatarCNPJ = (val) => {
+  if (!val) return "";
+  val = val.replace(/\D/g, "");
+  val = val.replace(/^(\d{2})(\d)/, "$1.$2");
+  val = val.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
+  val = val.replace(/\.(\d{3})(\d)/, ".$1/$2");
+  val = val.replace(/(\d{4})(\d)/, "$1-$2");
+  return val.slice(0, 18);
+};
+
 export default CNPJ;
