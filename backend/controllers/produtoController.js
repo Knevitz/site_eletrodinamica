@@ -29,6 +29,7 @@ const parseProdutoJSONFields = (produto) => {
   produto.codigosPorOpcao = produto.codigosPorOpcao || [];
   return produto;
 };
+const { Op } = require("sequelize");
 
 const incluirCodigos = async (produtoId, codigos) => {
   if (!codigos?.length) return;
@@ -49,6 +50,65 @@ exports.buscarProdutoPorSlug = async (req, res) => {
   } catch (erro) {
     console.error("Erro ao buscar produto por slug:", erro);
     res.status(500).json({ erro: "Erro ao buscar produto por slug." });
+  }
+};
+
+exports.buscarProdutosPorTextoOuCodigo = async (req, res) => {
+  const { q } = req.query;
+
+  if (!q) {
+    return res
+      .status(400)
+      .json({ erro: "Parâmetro de busca 'q' é obrigatório." });
+  }
+
+  try {
+    const produtos = await Produto.findAll({
+      where: {
+        ativo: true,
+        [Op.or]: [
+          { nome: { [Op.like]: `%${q}%` } },
+          { codigoPadrao: { [Op.like]: `%${q}%` } },
+        ],
+      },
+      include: [
+        {
+          model: CodigosPorOpcao,
+          as: "codigosPorOpcao",
+          required: false,
+        },
+      ],
+      order: [["nome", "ASC"]],
+    });
+
+    // Agora, buscar produtos que não tenham códigoPadrao ou nome que combinem,
+    // mas que tenham códigos por opção que combinem
+    const produtosPorCodigoOpcao = await Produto.findAll({
+      where: { ativo: true },
+      include: [
+        {
+          model: CodigosPorOpcao,
+          as: "codigosPorOpcao",
+          required: true,
+          where: {
+            codigo: { [Op.like]: `%${q}%` },
+          },
+        },
+      ],
+      order: [["nome", "ASC"]],
+    });
+
+    // Evitar duplicatas
+    const mapa = new Map();
+    [...produtos, ...produtosPorCodigoOpcao].forEach((p) =>
+      mapa.set(p.id, parseProdutoJSONFields(p))
+    );
+
+    const resultados = Array.from(mapa.values());
+    res.status(200).json(resultados);
+  } catch (erro) {
+    console.error("Erro ao buscar produtos:", erro);
+    res.status(500).json({ erro: "Erro ao buscar produtos." });
   }
 };
 

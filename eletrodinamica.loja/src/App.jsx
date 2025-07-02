@@ -23,6 +23,7 @@ import RedefinirSenha from "./pages/RedefinirSenha";
 import ProdutoDetalhe from "./pages/ProdutoDetalhe";
 import CategoriasPublicas from "./pages/CategoriasPublicas";
 import ProdutosPorCategoria from "./components/ProdutosPorCategoria";
+import BuscaResultados from "./components/BuscaResultados";
 
 // Cliente
 import ContaCliente from "./pages/ContaCliente";
@@ -64,6 +65,7 @@ const AppContent = () => {
             <Route path="/categorias" element={<CategoriasPublicas />} />
             <Route path="/categoria/:slug" element={<ProdutosPorCategoria />} />
             <Route path="/produto/:slug" element={<ProdutoDetalhe />} />
+            <Route path="/buscar" element={<BuscaResultados />} />
 
             {/* Cliente (rota protegida) */}
             <Route

@@ -9,7 +9,6 @@ import rebobinagemImage from "../assets/rebobinagem.jpg";
 import primeiro from "../assets/primeiro prédio.jpg";
 import segundo from "../assets/segundo prédio.jpg";
 import terceiro from "../assets/terceiro prédio.jpg";
-import BotaoComp from "../components/BotaoComp";
 
 const Home = () => {
   return (
@@ -167,11 +166,7 @@ const Home = () => {
             terá prazer em atendê-lo.
           </strong>
         </p>
-        <div className="mt-4 mb-4">
-          <BotaoComp to="/contato">
-            <strong>Entrar em contato</strong>
-          </BotaoComp>
-        </div>
+        <div className="mt-4 mb-4"></div>
       </Container>
     </div>
   );

@@ -25,10 +25,7 @@ const Cotacao = sequelize.define("Cotacao", {
 
   status: {
     type: DataTypes.STRING,
-    defaultValue: "Enviado",
-    validate: {
-      isIn: [["Enviado", "Recebido", "Respondido", "Cancelado"]],
-    },
+    isIn: [["Enviado"]],
   },
 
   itens: {
@@ -57,7 +54,6 @@ const Cotacao = sequelize.define("Cotacao", {
   },
 });
 
-// Associação explícita (opcional se já estiver feita em outro lugar)
 Cotacao.belongsTo(Usuario, {
   foreignKey: "clienteId",
   as: "cliente",

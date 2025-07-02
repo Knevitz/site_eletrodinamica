@@ -135,7 +135,7 @@ const ContaCliente = () => {
         <Table striped bordered hover>
           <thead>
             <tr>
-              <th>ID</th>
+              <th>Nº</th>
               <th>Data</th>
               <th>Itens</th>
               <th>Status</th>

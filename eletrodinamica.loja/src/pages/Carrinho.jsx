@@ -66,7 +66,7 @@ const Carrinho = () => {
         </Row>
       ))}
 
-      <div className="text-end mt-4">
+      <div className="text-end mt-4 mb-4">
         <Button variant="secondary" onClick={limpar}>
           Limpar Carrinho
         </Button>{" "}

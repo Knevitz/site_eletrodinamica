@@ -27,6 +27,7 @@ const NavBarComp = () => {
   const [categorias, setCategorias] = useState([]);
   const [token, setToken] = useState(localStorage.getItem("token") || null);
   const [nomeUsuario, setNomeUsuario] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     if (token) {
@@ -75,6 +76,13 @@ const NavBarComp = () => {
     }
   };
 
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      navigate(`/buscar?q=${encodeURIComponent(searchTerm.trim())}`);
+    }
+  };
+
   useEffect(() => {
     const fetchCategorias = async () => {
       try {
@@ -99,6 +107,7 @@ const NavBarComp = () => {
       location.pathname === `/categoria/${cat.slug}` ||
       location.pathname.startsWith(`/categoria/${cat.slug}/`)
   );
+
   return (
     <Navbar expand="lg" bg="dark" variant="dark" className="custom-navbar">
       <Container fluid>
@@ -161,7 +170,6 @@ const NavBarComp = () => {
                   <Dropdown.Item onClick={handlePerfilClick}>
                     Minha Conta
                   </Dropdown.Item>
-
                   <Dropdown.Divider />
                   <Dropdown.Item onClick={handleLogout}>Sair</Dropdown.Item>
                 </Dropdown.Menu>
@@ -190,14 +198,21 @@ const NavBarComp = () => {
 
           <Form
             className="d-flex ms-auto mt-2 mt-lg-0"
+            onSubmit={handleSearchSubmit}
             style={{ gap: "0.5rem" }}
           >
             <FormControl
               type="search"
-              placeholder="Pesquisar"
+              placeholder="Pesquisar por nome ou código"
               aria-label="Search"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
-            <Button className="btn-pesquisar" variant="outline-light">
+            <Button
+              type="submit"
+              className="btn-pesquisar"
+              variant="outline-light"
+            >
               Pesquisar
             </Button>
           </Form>
