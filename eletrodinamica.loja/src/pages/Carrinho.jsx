@@ -29,13 +29,6 @@ const Carrinho = () => {
       <h2>Carrinho</h2>
       {itens.map((item) => (
         <Row key={item.codigo} className="align-items-center mb-3 border p-2">
-          <Col md={2}>
-            <img
-              src={`${process.env.REACT_APP_API_URL}/uploads/${item.imagem}`}
-              alt={item.nome}
-              className="img-fluid"
-            />
-          </Col>
           <Col md={4}>
             <h5>{item.nome}</h5>
             <p>

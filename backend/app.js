@@ -6,6 +6,7 @@ const path = require("path");
 const rateLimit = require("express-rate-limit");
 const sequelize = require("./config/database");
 
+// Rotas
 const configRoutes = require("./routes/configRoutes");
 const catalogoRoutes = require("./routes/catalogo");
 const produtoRoutes = require("./routes/produtos");
@@ -16,10 +17,12 @@ const cotacaoRoutes = require("./routes/cotacoes");
 
 const app = express();
 
+// URLs permitidas
 const ALLOWED_ORIGINS = process.env.FRONTEND_URL
   ? process.env.FRONTEND_URL.split(",").map((o) => o.trim())
-  : ["http://localhost:3001", "http://localhost:3002"];
+  : ["https://loja-olive.vercel.app", "https://site-eight-ruby.vercel.app"];
 
+// CORS
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -33,28 +36,30 @@ app.use(
   })
 );
 
+// Helmet (segurança)
 app.use(
   helmet({
-    contentSecurityPolicy: {
-      useDefaults: true,
-      directives: {
-        defaultSrc: ["'self'", ...ALLOWED_ORIGINS],
-        scriptSrc: ["'self'", "'unsafe-inline'", ...ALLOWED_ORIGINS],
-        styleSrc: ["'self'", "'unsafe-inline'", ...ALLOWED_ORIGINS],
-        imgSrc: ["'self'", "data:", "blob:", ...ALLOWED_ORIGINS],
-        connectSrc: ["'self'", ...ALLOWED_ORIGINS],
-        fontSrc: ["'self'", "https:", "data:"],
-        objectSrc: ["'none'"],
-        upgradeInsecureRequests: [],
-      },
-    },
-    crossOriginEmbedderPolicy: false,
+    crossOriginResourcePolicy: { policy: "cross-origin" }, // Permite imagens de outro domínio
+    crossOriginEmbedderPolicy: false, // Evita conflitos com assets externos
+    contentSecurityPolicy: false, // Desativa CSP para evitar bloqueios no Vercel
   })
 );
 
+// Limite de requisições
+app.use(
+  rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+    standardHeaders: true,
+    legacyHeaders: false,
+  })
+);
+
+// Middlewares básicos
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Servir arquivos da pasta uploads
 app.use(
   "/uploads",
   express.static(path.join(__dirname, "uploads"), {
@@ -70,15 +75,6 @@ app.use(
   })
 );
 
-app.use(
-  rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 100,
-    standardHeaders: true,
-    legacyHeaders: false,
-  })
-);
-
 // Rotas da API
 app.use("/api/usuarios", usuarioRoutes);
 app.use("/api/cotacoes", cotacaoRoutes);
@@ -88,10 +84,12 @@ app.use("/api/catalogo", catalogoRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/config", configRoutes);
 
+// Rota de teste
 app.get("/", (req, res) => {
   res.send("API da Eletrodinâmica está rodando");
 });
 
+// Conectar ao banco de dados
 sequelize
   .authenticate()
   .then(() => console.log("Banco de dados conectado com sucesso"))

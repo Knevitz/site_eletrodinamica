@@ -84,6 +84,7 @@ const NavBarComp = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 id="loja-link"
+                active={false}
               >
                 Loja
               </Nav.Link>

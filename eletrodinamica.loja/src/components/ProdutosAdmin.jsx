@@ -14,7 +14,7 @@ const ProdutosAdmin = () => {
     try {
       setCarregando(true);
       const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/produtos/admin`,
+        `${process.env.REACT_APP_API_URL}api/produtos/admin`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -42,7 +42,7 @@ const ProdutosAdmin = () => {
 
     try {
       const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/produtos/${id}`,
+        `${process.env.REACT_APP_API_URL}api/produtos/${id}`,
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
@@ -59,7 +59,7 @@ const ProdutosAdmin = () => {
   const toggleAtivo = async (id, ativoAtual) => {
     try {
       const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/produtos/${id}`,
+        `${process.env.REACT_APP_API_URL}api/produtos/${id}`,
         {
           method: "PATCH",
           headers: {
@@ -114,8 +114,29 @@ const ProdutosAdmin = () => {
             ) : (
               produtos.map((produto) => (
                 <tr key={produto.id}>
-                  <td>{produto.nome}</td>
-                  <td>{produto.descricao}</td>
+                  <td
+                    style={{
+                      maxWidth: "200px",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                    title={produto.nome}
+                  >
+                    {produto.nome}
+                  </td>
+
+                  <td 
+                   style={{
+                     maxWidth: "300px",
+                     whiteSpace: "nowrap",
+                     overflow: "hidden",
+                     textOverflow: "ellipsis",
+                   }}  
+                   title={produto.descricao}
+                  >
+                    {produto.descricao}
+                  </td>
                   <td>{produto.ativo ? "Sim" : "Não"}</td>
                   <td>
                     <Button

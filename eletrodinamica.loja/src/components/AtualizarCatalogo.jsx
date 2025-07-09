@@ -37,7 +37,7 @@ const AtualizarCatalogo = () => {
       }
 
       const resposta = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/catalogo`,
+        `${process.env.REACT_APP_API_URL}api/catalogo`,
         {
           method: "POST",
           headers: {

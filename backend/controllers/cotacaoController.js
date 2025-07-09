@@ -48,18 +48,11 @@ exports.enviarCotacao = async (req, res) => {
   <p><strong>CNPJ:</strong> ${cliente.cnpj}</p>
   <p><strong>Email:</strong> ${cliente.email}</p>
   <p><strong>Nº:</strong> ${novaCotacao.id}</p>
-  <p><strong>Data:</strong> ${new Date(
-    novaCotacao.dataEnvio
-  ).toLocaleDateString("pt-BR")}</p>
-  <p><strong>Hora:</strong> ${new Date(
-    novaCotacao.dataEnvio
-  ).toLocaleTimeString("pt-BR")}</p>
   <br/>
   <h3>Itens:</h3>
   <table border="1" cellpadding="6" cellspacing="0">
     <thead>
       <tr>
-        <th>Imagem</th>
         <th>Nome</th>
         <th>Código</th>
         <th>Quantidade</th>
@@ -70,7 +63,6 @@ exports.enviarCotacao = async (req, res) => {
         .map(
           (item) => `
             <tr>
-              <td><img src="${process.env.API_URL}/uploads/${item.imagem}" width="100"/></td>
               <td>${item.nome}</td>
               <td>${item.codigo}</td>
               <td>${item.quantidade}</td>

@@ -18,7 +18,7 @@ const ProdutosPorCategoria = () => {
 
       try {
         const res = await fetch(
-          `${process.env.REACT_APP_API_URL}/api/produtos/categoria/${slug}`
+          `${process.env.REACT_APP_API_URL}api/produtos/categoria/${slug}`
         );
         if (!res.ok) throw new Error("Erro ao buscar produtos");
         const data = await res.json();
@@ -56,7 +56,7 @@ const ProdutosPorCategoria = () => {
                   {produto.imagem && (
                     <Card.Img
                       variant="top"
-                      src={`${process.env.REACT_APP_API_URL}/uploads/${produto.imagem}`}
+                      src={`${process.env.REACT_APP_API_URL}uploads/${produto.imagem}`}
                       alt={produto.nome}
                     />
                   )}

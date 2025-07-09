@@ -24,7 +24,7 @@ const Home = () => {
     const fetchData = async () => {
       try {
         // Buscar produtos ativos
-        const resProdutos = await api.get("/api/produtos/ativos");
+        const resProdutos = await api.get("api/produtos/ativos");
         const produtosData = Array.isArray(resProdutos.data)
           ? resProdutos.data
           : [];
@@ -87,7 +87,7 @@ const Home = () => {
               <img
                 className="d-block w-100"
                 onClick={() => navigate(`/produto/${produto.slug}`)}
-                src={`${API_URL}/uploads/${produto.imagem}`}
+                src={`${API_URL}uploads/${produto.imagem}`}
                 alt={produto.nome}
               />
               <Carousel.Caption>
@@ -118,7 +118,7 @@ const Home = () => {
             >
               <Card.Img
                 variant="top"
-                src={`${API_URL}/uploads/${produto.imagem}`}
+                src={`${API_URL}uploads/${produto.imagem}`}
                 alt={produto.nome}
                 style={{
                   height: "250px",
@@ -160,7 +160,7 @@ const Home = () => {
                   >
                     <Card.Img
                       variant="top"
-                      src={`${API_URL}/uploads/${produto.imagem}`}
+                      src={`${API_URL}uploads/${produto.imagem}`}
                       alt={produto.nome}
                       style={{
                         height: "250px",

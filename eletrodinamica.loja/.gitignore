@@ -1,0 +1,42 @@
+# 🔁 Dependências
+**/node_modules/
+**/dist/
+
+# ⚙️ Build dos apps React
+**/build/
+
+# 💾 Ambiente
+**/.env
+**/.env.local
+**/.env.production
+**/.env.development
+
+# 🐞 Logs
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
+
+# ⛔ Cache
+**/.cache/
+**/.turbo/
+**/.next/
+**/.vercel/
+
+# 🚫 IDEs e sistema operacional
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# 📂 Uploads locais (se usar multer no backend)
+backend/uploads/
+
+# ⚙️ Outras configs que podem ser ignoradas
+*.log
+*.pid
+*.tgz
+*.lock
+
+# ⚠️ Configurações específicas do Vercel (opcional, se não quiser versionar)
+.vercel/

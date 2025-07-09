@@ -15,7 +15,7 @@ const ClientesAdmin = () => {
       try {
         const token = localStorage.getItem("token");
         const res = await fetch(
-          `${process.env.REACT_APP_API_URL}/api/usuarios`,
+          `${process.env.REACT_APP_API_URL}api/usuarios`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

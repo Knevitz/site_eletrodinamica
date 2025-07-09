@@ -87,7 +87,7 @@ const NavBarComp = () => {
     const fetchCategorias = async () => {
       try {
         const res = await fetch(
-          `${process.env.REACT_APP_API_URL}/api/categorias`
+          `${process.env.REACT_APP_API_URL}api/categorias`
         );
         if (!res.ok) throw new Error("Erro ao carregar categorias");
         const data = await res.json();
@@ -138,7 +138,7 @@ const NavBarComp = () => {
                   <NavDropdown.Item
                     key={categoria.id}
                     as={NavLink}
-                    to={`/categoria/${categoria.slug}`}
+                    to={`categoria/${categoria.slug}`}
                     end
                   >
                     {categoria.nome}

@@ -18,7 +18,7 @@ const ProdutoDetalhe = () => {
   useEffect(() => {
     const buscarProduto = async () => {
       try {
-        const res = await api.get(`/api/produtos/slug/${slug}`);
+        const res = await api.get(`api/produtos/slug/${slug}`);
         if (!res.data || typeof res.data !== "object") {
           throw new Error("Produto não encontrado.");
         }
@@ -78,7 +78,7 @@ const ProdutoDetalhe = () => {
         <Col md={6} className="text-center mb-4 mb-md-0">
           {produto.imagem ? (
             <img
-              src={`${API_URL}/uploads/${produto.imagem}`}
+              src={`${API_URL}uploads/${produto.imagem}`}
               alt={produto.nome || "Imagem do produto"}
               style={{
                 maxWidth: "100%",
@@ -141,7 +141,7 @@ const ProdutoDetalhe = () => {
           {produto.pdf && typeof produto.pdf === "string" && (
             <div className="mt-4">
               <a
-                href={`${API_URL}/uploads/${produto.pdf}`}
+                href={`${API_URL}uploads/${produto.pdf}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn btn-outline-secondary w-100"

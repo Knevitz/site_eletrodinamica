@@ -45,7 +45,7 @@ const Controladores = () => {
         {produtos.map((produto) => (
           <p key={produto.slug}>
             <a
-              href={`http://localhost:3001/produto/${produto.slug}`}
+              href={`https://loja-olive.vercel.app/produto/${produto.slug}`}
               target="_blank"
               rel="noopener noreferrer"
               className="link-vermelho"
@@ -61,7 +61,7 @@ const Controladores = () => {
         <div className="mb-4">
           <Button
             variant="danger"
-            href={`${process.env.REACT_APP_API_URL}/api/catalogo/arquivo`}
+            href={`${process.env.REACT_APP_API_URL}api/catalogo/arquivo`}
             target="_blank"
             rel="noopener noreferrer"
           >

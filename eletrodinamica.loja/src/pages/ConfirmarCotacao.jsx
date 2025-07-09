@@ -48,7 +48,7 @@ const ConfirmarCotacao = () => {
     setMensagem(null);
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/cotacoes`,
+        `${process.env.REACT_APP_API_URL}api/cotacoes`,
         {
           method: "POST",
           headers: {
@@ -112,13 +112,6 @@ const ConfirmarCotacao = () => {
         <tbody>
           {itens.map((item) => (
             <tr key={item.codigo}>
-              <td>
-                <img
-                  src={`${process.env.REACT_APP_API_URL}/uploads/${item.imagem}`}
-                  alt={item.nome}
-                  style={{ width: "80px" }}
-                />
-              </td>
               <td>{item.nome}</td>
               <td>{item.codigo}</td>
               <td>{item.quantidade}</td>

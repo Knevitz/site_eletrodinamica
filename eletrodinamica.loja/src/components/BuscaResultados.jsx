@@ -16,7 +16,7 @@ const BuscaResultados = () => {
     fetch(
       `${
         process.env.REACT_APP_API_URL
-      }/api/produtos/buscar?q=${encodeURIComponent(q)}`
+      }api/produtos/buscar?q=${encodeURIComponent(q)}`
     )
       .then((res) => {
         if (!res.ok) throw new Error("Erro na busca");
